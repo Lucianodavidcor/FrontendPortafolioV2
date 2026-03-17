@@ -150,7 +150,7 @@ export function HeroSection({ name, title, shortBio, cvUrl = '/cv.pdf' }: HeroPr
       />
 
       {/* Línea horizontal decorativa */}
-      <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent pointer-events-none" />
+      <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-px bg-linear-to-r from-transparent via-primary/10 to-transparent pointer-events-none" />
 
       {/* ── Contenido ── */}
       <div className="relative z-10 max-w-5xl mx-auto px-6 md:px-12 text-center pt-24 pb-16">
@@ -234,7 +234,7 @@ export function HeroSection({ name, title, shortBio, cvUrl = '/cv.pdf' }: HeroPr
           className="mt-20 flex flex-col items-center gap-2 text-slate-700 animate-in fade-in duration-700"
           style={{ animationDelay: '1400ms', animationFillMode: 'both' }}
         >
-          <div className="w-px h-12 bg-gradient-to-b from-transparent via-border-dark to-transparent animate-pulse" />
+          <div className="w-px h-12 bg-linear-to-b from-transparent via-border-dark to-transparent animate-pulse" />
           <span className="text-[9px] font-bold uppercase tracking-[0.3em]">Scroll</span>
         </div>
 
