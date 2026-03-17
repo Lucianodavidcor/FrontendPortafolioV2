@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Layers, LayoutDashboard, FolderOpen, UserCircle, Inbox, Settings } from 'lucide-react';
+import { Layers, LayoutDashboard, FolderOpen, UserCircle, Inbox, Settings, Briefcase } from 'lucide-react';
 
 export const AdminSidebar = () => {
   const pathname = usePathname();
@@ -11,6 +11,7 @@ export const AdminSidebar = () => {
   const navLinks = [
     { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
     { name: 'Proyectos', href: '/admin/projects', icon: FolderOpen },
+    { name: 'Experiencia', href: '/admin/experience', icon: Briefcase },
     { name: 'Bio & Skills', href: '/admin/bio-skills', icon: UserCircle },
     { name: 'Bandeja', href: '/admin/messages', icon: Inbox, badge: 3 },
     { name: 'Ajustes', href: '/admin/settings', icon: Settings },
@@ -30,7 +31,7 @@ export const AdminSidebar = () => {
       {/* Navegación */}
       <nav className="flex-1 px-4 space-y-2 py-4">
         {navLinks.map((link) => {
-          const isActive = pathname === link.href;
+          const isActive = pathname.startsWith(link.href);
           const Icon = link.icon;
 
           return (
@@ -46,7 +47,6 @@ export const AdminSidebar = () => {
               <Icon className={`w-5 h-5 ${isActive ? 'text-primary' : ''}`} />
               <span className="text-sm font-semibold">{link.name}</span>
               
-              {/* Badge estático (por ahora) para mensajes no leídos */}
               {link.badge && (
                 <span className="ml-auto bg-primary text-white text-[10px] px-1.5 py-0.5 rounded-full">
                   {link.badge}
@@ -57,7 +57,7 @@ export const AdminSidebar = () => {
         })}
       </nav>
 
-      {/* Perfil del Usuario (Estático por ahora) */}
+      {/* Perfil del Usuario */}
       <div className="p-4 border-t border-slate-200 dark:border-primary/10">
         <div className="flex items-center gap-3 p-2">
           <div className="w-10 h-10 rounded-full bg-slate-300 dark:bg-primary/30 bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&auto=format&fit=crop')" }}></div>
