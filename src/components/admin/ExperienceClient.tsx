@@ -80,7 +80,7 @@ export const ExperienceClient = ({ initialData, token }: ExperienceClientProps) 
                       {formatDate(exp.startDate)} - {formatDate(exp.endDate)}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-slate-500 dark:text-slate-400 max-w-[300px]">
+                  <td className="px-6 py-4 text-sm text-slate-500 dark:text-slate-400 max-w-75">
                     <span className="line-clamp-2">{exp.description}</span>
                   </td>
                   <td className="px-6 py-4 text-right">
