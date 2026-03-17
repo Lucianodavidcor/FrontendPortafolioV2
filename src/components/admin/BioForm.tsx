@@ -4,32 +4,25 @@ import React, { useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Save, UserCircle, Plus, Trash2, Globe } from 'lucide-react';
-
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
+import { Save, Plus, Trash2, Globe, User, Briefcase, FileText, CheckCircle2, AlertCircle, ExternalLink } from 'lucide-react';
 import { fetchApi } from '@/lib/api';
 
-// SOLUCIÓN: Exportamos la interfaz Bio con los campos exactos del backend
 export interface Bio {
   name: string;
   title: string;
   shortBio: string;
-  socialLinks?: {
-    platform: string;
-    url: string;
-  }[];
+  socialLinks?: { platform: string; url: string }[];
 }
 
 const socialLinkSchema = z.object({
-  platform: z.string().min(1, 'La plataforma es requerida'),
-  url: z.string().url('Debe ser una URL válida'),
+  platform: z.string().min(1, 'Requerido'),
+  url: z.string().url('URL inválida'),
 });
 
 const bioSchema = z.object({
-  name: z.string().min(2, 'El nombre es muy corto'),
-  title: z.string().min(2, 'El título es muy corto'),
-  shortBio: z.string().min(10, 'La biografía debe tener al menos 10 caracteres'),
+  name: z.string().min(2, 'Mínimo 2 caracteres'),
+  title: z.string().min(2, 'Mínimo 2 caracteres'),
+  shortBio: z.string().min(10, 'Mínimo 10 caracteres'),
   socialLinks: z.array(socialLinkSchema).optional(),
 });
 
@@ -40,15 +33,25 @@ interface BioFormProps {
   token: string;
 }
 
+// Plataformas sugeridas con sus colores
+const PLATFORM_SUGGESTIONS = [
+  { name: 'GitHub',    placeholder: 'https://github.com/usuario' },
+  { name: 'LinkedIn',  placeholder: 'https://linkedin.com/in/usuario' },
+  { name: 'Twitter',   placeholder: 'https://twitter.com/usuario' },
+  { name: 'Instagram', placeholder: 'https://instagram.com/usuario' },
+  { name: 'Portfolio', placeholder: 'https://mi-sitio.com' },
+];
+
 export const BioForm = ({ initialData, token }: BioFormProps) => {
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
 
   const {
     register,
     handleSubmit,
     control,
-    formState: { errors, isSubmitting },
+    watch,
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<BioFormValues>({
     resolver: zodResolver(bioSchema),
     defaultValues: {
@@ -59,130 +62,284 @@ export const BioForm = ({ initialData, token }: BioFormProps) => {
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "socialLinks",
-  });
+  const { fields, append, remove } = useFieldArray({ control, name: 'socialLinks' });
+
+  const bioValue = watch('shortBio');
+  const BIO_MAX = 300;
 
   const onSubmit = async (data: BioFormValues) => {
-    setErrorMessage('');
-    setSuccessMessage('');
-
+    setStatus('idle');
+    setErrorMsg('');
     try {
-      await fetchApi('/profile', {
-        method: 'PUT',
-        token,
-        body: JSON.stringify(data),
-      });
-
-      setSuccessMessage('Perfil actualizado correctamente.');
-      setTimeout(() => setSuccessMessage(''), 3000);
+      await fetchApi('/profile', { method: 'PUT', token, body: JSON.stringify(data) });
+      setStatus('success');
+      setTimeout(() => setStatus('idle'), 4000);
     } catch (error: any) {
-      setErrorMessage(error.message || 'Error al actualizar el perfil.');
+      setStatus('error');
+      setErrorMsg(error.message || 'Error al actualizar el perfil.');
     }
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-primary/10 shadow-sm">
-      <div className="flex items-center gap-3 mb-6 pb-6 border-b border-slate-200 dark:border-slate-800/50">
-        <div className="bg-primary/10 p-2 rounded-lg text-primary">
-          <UserCircle className="w-6 h-6" />
+    <div className="rounded-2xl border border-border-dark bg-background-dark overflow-hidden">
+
+      {/* ── Header ── */}
+      <div className="px-8 py-6 bg-surface-dark/60 border-b border-border-dark flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+            <User className="w-4 h-4 text-primary" />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-white leading-none">Perfil Público</h3>
+            <p className="text-[10px] text-slate-500 mt-0.5 uppercase tracking-widest">Información del portafolio</p>
+          </div>
         </div>
-        <div>
-          <h3 className="text-xl font-bold">Información del Perfil</h3>
-          <p className="text-sm text-slate-500 dark:text-slate-400">Datos principales y redes sociales.</p>
-        </div>
+
+        {/* Indicador de estado */}
+        {status === 'success' && (
+          <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold animate-in fade-in slide-in-from-right-2">
+            <CheckCircle2 className="w-4 h-4" />
+            Guardado
+          </div>
+        )}
+        {status === 'error' && (
+          <div className="flex items-center gap-2 text-red-400 text-xs font-bold animate-in fade-in">
+            <AlertCircle className="w-4 h-4" />
+            Error
+          </div>
+        )}
       </div>
 
-      {errorMessage && (
-        <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-sm font-semibold">
-          {errorMessage}
-        </div>
-      )}
+      <form onSubmit={handleSubmit(onSubmit)} className="divide-y divide-border-dark">
 
-      {successMessage && (
-        <div className="mb-6 p-4 rounded-xl bg-green-500/10 border border-green-500/20 text-green-500 text-sm font-semibold">
-          {successMessage}
-        </div>
-      )}
+        {/* ── Bloque: Identidad ── */}
+        <div className="px-8 py-6 space-y-5">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-primary">01</span>
+            <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-slate-500">Identidad</span>
+            <div className="flex-1 h-px bg-border-dark" />
+          </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Input 
-            label="Nombre completo *" 
-            placeholder="Tu nombre" 
-            {...register('name')} 
-            error={errors.name?.message} 
-          />
-          <Input 
-            label="Título profesional *" 
-            placeholder="Ej. Fullstack Developer" 
-            {...register('title')} 
-            error={errors.title?.message} 
-          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {/* Nombre */}
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                <User className="w-3 h-3" /> Nombre completo
+              </label>
+              <div className="relative">
+                <input
+                  {...register('name')}
+                  placeholder="Tu nombre"
+                  className={`w-full bg-surface-dark/40 border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-700 outline-none transition-all
+                    ${errors.name
+                      ? 'border-red-500/50 focus:border-red-500 bg-red-500/5'
+                      : 'border-border-dark focus:border-primary focus:bg-primary/5'
+                    }`}
+                />
+              </div>
+              {errors.name && (
+                <p className="text-[10px] text-red-400 font-semibold flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3" /> {errors.name.message}
+                </p>
+              )}
+            </div>
+
+            {/* Título */}
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                <Briefcase className="w-3 h-3" /> Título profesional
+              </label>
+              <input
+                {...register('title')}
+                placeholder="Fullstack Developer"
+                className={`w-full bg-surface-dark/40 border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-700 outline-none transition-all
+                  ${errors.title
+                    ? 'border-red-500/50 focus:border-red-500 bg-red-500/5'
+                    : 'border-border-dark focus:border-primary focus:bg-primary/5'
+                  }`}
+              />
+              {errors.title && (
+                <p className="text-[10px] text-red-400 font-semibold flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3" /> {errors.title.message}
+                </p>
+              )}
+            </div>
+          </div>
         </div>
 
-        <div className="space-y-2">
-          <label className="text-xs font-bold uppercase tracking-widest text-primary block">Biografía corta *</label>
-          <textarea 
-            className={`w-full bg-transparent border-0 border-b-2 py-2 focus:ring-0 transition-colors font-medium resize-none outline-none ${errors.shortBio ? 'border-red-500 text-red-500 focus:border-red-500' : 'border-slate-300 dark:border-slate-700 focus:border-primary'}`}
-            placeholder="Cuéntale al mundo quién eres..." 
-            rows={3} 
-            {...register('shortBio')}
-          />
-          {errors.shortBio && <p className="text-xs font-semibold text-red-500">{errors.shortBio.message}</p>}
-        </div>
+        {/* ── Bloque: Biografía ── */}
+        <div className="px-8 py-6 space-y-4">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-primary">02</span>
+            <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-slate-500">Presentación</span>
+            <div className="flex-1 h-px bg-border-dark" />
+          </div>
 
-        <div className="space-y-4 pt-4">
-          <div className="flex items-center justify-between">
-            <label className="text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-2">
-              <Globe className="w-4 h-4" /> Redes Sociales
+          <div className="space-y-2">
+            <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+              <FileText className="w-3 h-3" /> Biografía corta
             </label>
+            <div className="relative">
+              <textarea
+                {...register('shortBio')}
+                rows={4}
+                maxLength={BIO_MAX}
+                placeholder="Cuéntale al mundo quién eres, qué hacés y qué te apasiona…"
+                className={`w-full bg-surface-dark/40 border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-700 outline-none transition-all resize-none leading-relaxed
+                  ${errors.shortBio
+                    ? 'border-red-500/50 focus:border-red-500 bg-red-500/5'
+                    : 'border-border-dark focus:border-primary focus:bg-primary/5'
+                  }`}
+              />
+              {/* Contador de caracteres */}
+              <div className={`absolute bottom-3 right-3 text-[9px] font-mono font-bold transition-colors
+                ${(bioValue?.length || 0) > BIO_MAX * 0.9 ? 'text-amber-400' : 'text-slate-700'}`}>
+                {bioValue?.length || 0}/{BIO_MAX}
+              </div>
+            </div>
+            {errors.shortBio && (
+              <p className="text-[10px] text-red-400 font-semibold flex items-center gap-1">
+                <AlertCircle className="w-3 h-3" /> {errors.shortBio.message}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* ── Bloque: Redes Sociales ── */}
+        <div className="px-8 py-6 space-y-4">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-primary">03</span>
+              <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-slate-500">Redes Sociales</span>
+              <div className="w-16 h-px bg-border-dark" />
+            </div>
             <button
               type="button"
               onClick={() => append({ platform: '', url: '' })}
-              className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase tracking-widest hover:bg-primary/20 transition-colors"
             >
               <Plus className="w-3 h-3" /> Agregar link
             </button>
           </div>
 
-          <div className="space-y-3">
-            {fields.map((field, index) => (
-              <div key={field.id} className="flex flex-col md:flex-row gap-3 items-end bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-800">
-                <div className="flex-1 w-full">
-                  <Input 
-                    label="Plataforma" 
-                    placeholder="GitHub, LinkedIn..." 
-                    {...register(`socialLinks.${index}.platform` as const)} 
-                    error={errors.socialLinks?.[index]?.platform?.message}
-                  />
-                </div>
-                <div className="flex-2 w-full">
-                  <Input 
-                    label="URL" 
-                    placeholder="https://..." 
-                    {...register(`socialLinks.${index}.url` as const)} 
-                    error={errors.socialLinks?.[index]?.url?.message}
-                  />
-                </div>
+          {/* Sugerencias rápidas si no hay links */}
+          {fields.length === 0 && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {PLATFORM_SUGGESTIONS.slice(0, 3).map(p => (
                 <button
+                  key={p.name}
                   type="button"
-                  onClick={() => remove(index)}
-                  className="p-2.5 text-slate-400 hover:text-red-500 transition-colors"
+                  onClick={() => append({ platform: p.name, url: '' })}
+                  className="flex items-center gap-2 px-3 py-2 rounded-xl border border-dashed border-border-dark text-slate-600 hover:border-primary/30 hover:text-slate-400 hover:bg-primary/5 transition-all text-xs font-medium"
                 >
-                  <Trash2 className="w-5 h-5" />
+                  <ExternalLink className="w-3 h-3" />
+                  {p.name}
                 </button>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
+
+          {/* Campos de links */}
+          {fields.length > 0 && (
+            <div className="space-y-3">
+              {fields.map((field, index) => (
+                <div
+                  key={field.id}
+                  className="group flex gap-3 items-start p-4 rounded-xl bg-surface-dark/40 border border-border-dark hover:border-primary/20 transition-colors"
+                >
+                  {/* Número */}
+                  <div className="w-6 h-6 rounded-md bg-primary/10 border border-primary/20 flex items-center justify-center text-[9px] font-black text-primary mt-2.5 shrink-0">
+                    {index + 1}
+                  </div>
+
+                  <div className="flex-1 grid grid-cols-1 sm:grid-cols-5 gap-3">
+                    {/* Plataforma */}
+                    <div className="sm:col-span-2 space-y-1.5">
+                      <label className="text-[9px] font-bold uppercase tracking-widest text-slate-600">
+                        Plataforma
+                      </label>
+                      <div className="relative">
+                        <input
+                          {...register(`socialLinks.${index}.platform`)}
+                          placeholder="GitHub"
+                          list={`platform-suggestions-${index}`}
+                          className={`w-full bg-background-dark border rounded-lg px-3 py-2 text-xs text-white placeholder-slate-700 outline-none transition-all
+                            ${errors.socialLinks?.[index]?.platform
+                              ? 'border-red-500/50'
+                              : 'border-border-dark focus:border-primary'
+                            }`}
+                        />
+                        <datalist id={`platform-suggestions-${index}`}>
+                          {PLATFORM_SUGGESTIONS.map(p => (
+                            <option key={p.name} value={p.name} />
+                          ))}
+                        </datalist>
+                      </div>
+                      {errors.socialLinks?.[index]?.platform && (
+                        <p className="text-[9px] text-red-400 font-semibold">
+                          {errors.socialLinks[index]?.platform?.message}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* URL */}
+                    <div className="sm:col-span-3 space-y-1.5">
+                      <label className="text-[9px] font-bold uppercase tracking-widest text-slate-600">
+                        URL
+                      </label>
+                      <input
+                        {...register(`socialLinks.${index}.url`)}
+                        placeholder="https://…"
+                        className={`w-full bg-background-dark border rounded-lg px-3 py-2 text-xs text-white placeholder-slate-700 outline-none transition-all
+                          ${errors.socialLinks?.[index]?.url
+                            ? 'border-red-500/50'
+                            : 'border-border-dark focus:border-primary'
+                          }`}
+                      />
+                      {errors.socialLinks?.[index]?.url && (
+                        <p className="text-[9px] text-red-400 font-semibold">
+                          {errors.socialLinks[index]?.url?.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Eliminar */}
+                  <button
+                    type="button"
+                    onClick={() => remove(index)}
+                    className="p-2 mt-5 text-slate-700 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                    title="Eliminar"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
-        <div className="pt-6 flex justify-end">
-          <Button type="submit" isLoading={isSubmitting} icon={<Save className="w-5 h-5" />}>
-            Guardar Perfil
-          </Button>
+        {/* ── Footer con botón guardar ── */}
+        <div className="px-8 py-5 bg-surface-dark/40 flex items-center justify-between gap-4">
+          <div className="text-[10px] text-slate-600 font-medium">
+            {isDirty
+              ? <span className="text-amber-400 font-bold flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse inline-block" /> Cambios sin guardar</span>
+              : <span className="text-slate-700">Sin cambios pendientes</span>
+            }
+          </div>
+
+          <button
+            type="submit"
+            disabled={isSubmitting || !isDirty}
+            className="flex items-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed text-white px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-100"
+          >
+            {isSubmitting
+              ? <><span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Guardando…</>
+              : <><Save className="w-3.5 h-3.5" /> Guardar perfil</>
+            }
+          </button>
         </div>
+
       </form>
     </div>
   );

@@ -9,16 +9,14 @@ export const Footer = () => {
           <div className="bg-primary/10 p-2 rounded-full">
             <Infinity className="text-primary w-4 h-4" />
           </div>
-          <span className="text-lg font-bold uppercase">ALEX D.</span>
+          <span className="text-lg font-bold uppercase">Luciano Cortez</span>
         </div>
         <div className="flex gap-8 text-sm font-medium">
-          <a href="#" className="hover:text-primary transition-colors">Dribbble</a>
-          <a href="#" className="hover:text-primary transition-colors">Twitter</a>
+          <a href="#" className="hover:text-primary transition-colors">GitHub</a>
           <a href="#" className="hover:text-primary transition-colors">LinkedIn</a>
-          <a href="#" className="hover:text-primary transition-colors">Instagram</a>
         </div>
         <p className="text-xs text-slate-500 font-medium">
-          © {new Date().getFullYear()} Alex D. Design Studio. Todos los derechos reservados.
+          © {new Date().getFullYear()} luciano Cortez. Lycheed. Todos los derechos reservados.
         </p>
       </div>
     </footer>
