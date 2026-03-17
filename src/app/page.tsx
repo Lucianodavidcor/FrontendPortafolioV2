@@ -20,20 +20,19 @@ export default async function Home() {
     fetchApi<ApiResponse<Experience[]>>('/experience').catch(() => null),
   ]);
 
-  const profile = profileRes?.data;
-  const projects = projectsRes?.data || [];
-  const skills = skillsRes?.data || [];
-  const experiences = expRes?.data || [];
+  const profile     = profileRes?.data;
+  const projects    = projectsRes?.data || [];
+  const skills      = skillsRes?.data   || [];
+  const experiences = expRes?.data      || [];
 
-  // URL del CV: primero intenta la variable de entorno, luego el archivo en /public
-  const cvUrl = process.env.NEXT_PUBLIC_CV_URL || '/CV-Luciano-Cortez.pdf';
+  const cvUrl = process.env.NEXT_PUBLIC_CV_URL || '/cv.pdf';
 
   return (
     <>
       <Header />
 
       <main className="flex-1">
-        {/* SECCIÓN HERO */}
+        {/* ── HERO ── */}
         <section className="relative min-h-screen flex items-center justify-center pt-20 px-6">
           <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
             <div className="absolute top-1/4 -left-20 w-96 h-96 bg-primary/20 rounded-full blur-[120px]" />
@@ -52,23 +51,14 @@ export default async function Home() {
 
               <h1 className="text-6xl md:text-8xl font-black leading-[0.9] tracking-tighter uppercase">
                 {profile ? (
-                  <>
-                    HOLA SOY <br />
-                    <span className="text-primary italic">{profile.name}</span>
-                  </>
+                  <>HOLA SOY <br /><span className="text-primary italic">{profile.name}</span></>
                 ) : (
-                  <>
-                    CREANDO <br />
-                    <span className="text-primary italic">POESÍA</span>
-                    <br />
-                    DIGITAL.
-                  </>
+                  <>CREANDO <br /><span className="text-primary italic">POESÍA</span><br />DIGITAL.</>
                 )}
               </h1>
 
               <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-lg leading-relaxed">
-                {profile?.shortBio ||
-                  'Diseñador multidisciplinar y desarrollador creativo empujando los límites de lo que es posible en la web moderna.'}
+                {profile?.shortBio || 'Diseñador multidisciplinar y desarrollador creativo empujando los límites de lo que es posible en la web moderna.'}
               </p>
 
               <div className="flex flex-wrap gap-4 pt-4 justify-center md:justify-start">
@@ -79,8 +69,6 @@ export default async function Home() {
                   Ver Proyectos
                   <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                 </a>
-
-                {/* Botón CV — usa cvUrl para que funcione tanto con archivo local como URL externa */}
                 <a
                   href={cvUrl}
                   target="_blank"
@@ -95,15 +83,15 @@ export default async function Home() {
             </div>
 
             <div className="relative flex justify-center lg:justify-end">
-              <div className="relative w-72 h-96 md:w-96 md:h-125 rounded-3xl overflow-hidden shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500">
+              <div className="relative w-72 h-96 md:w-96 md:h-[500px] rounded-3xl overflow-hidden shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500">
                 <img
                   src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop"
                   alt="Retrato"
                   className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
                 />
-                <div className="absolute inset-0 bg-linear-to-t from-background-dark/80 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background-dark/80 to-transparent pointer-events-none" />
               </div>
-              <div className="absolute -bottom-6 -left-6 md:-left-12 glass-card p-6 rounded-2xl shadow-xl max-w-50">
+              <div className="absolute -bottom-6 -left-6 md:-left-12 glass-card p-6 rounded-2xl shadow-xl max-w-[200px]">
                 <p className="text-xs font-bold text-primary mb-2 uppercase tracking-widest">Rol Actual</p>
                 <p className="text-sm font-medium">{profile?.title || 'Desarrollador & Diseñador'}</p>
               </div>
@@ -117,7 +105,11 @@ export default async function Home() {
         <ContactSection />
       </main>
 
-      <Footer />
+      {/* Footer recibe socialLinks y nombre del perfil desde la DB */}
+      <Footer
+        socialLinks={profile?.socialLinks || []}
+        authorName={profile?.name || 'Portfolio'}
+      />
     </>
   );
 }
