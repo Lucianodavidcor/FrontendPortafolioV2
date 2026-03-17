@@ -6,8 +6,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useRouter } from 'next/navigation';
 import { 
-  Save, ArrowLeft, Image as ImageIcon, Link as LinkIcon, 
-  Github, Globe, Info, Code, Eye, Edit2, ChevronRight, Terminal, CheckCircle2 
+  Save, ArrowLeft, Image as ImageIcon,
+  Code, ChevronRight, Terminal
 } from 'lucide-react';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
@@ -81,46 +81,78 @@ export const ProjectForm = ({ initialData, token }: { initialData?: Project | nu
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border-dark pb-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-[0.3em]">
-            SYSTEM <ChevronRight size={10} /> PROJECT_ENV <ChevronRight size={10} /> <span className="text-primary">WRITE</span>
+            SYSTEM <ChevronRight size={10} /> PROJECT_ENV <ChevronRight size={10} /> <span className="text-primary">{initialData ? 'EDIT' : 'WRITE'}</span>
           </div>
-          <h2 className="text-3xl font-bold tracking-tighter text-white">Project Details</h2>
+          <h2 className="text-3xl font-bold tracking-tighter text-white">
+            {initialData ? 'Edit Project' : 'New Project'}
+          </h2>
         </div>
+
         <div className="flex gap-3">
+          {/* Botón Cancelar — Link directo, sin submit */}
           <Link href="/admin/projects">
-            <button className="px-5 py-2 rounded border border-border-dark font-bold text-[10px] uppercase tracking-widest hover:bg-surface-dark transition-all text-slate-400">
+            <button
+              type="button"
+              className="px-5 py-2 rounded border border-border-dark font-bold text-[10px] uppercase tracking-widest hover:bg-surface-dark transition-all text-slate-400"
+            >
               [ CANCEL ]
             </button>
           </Link>
-          <Button 
-            onClick={handleSubmit(onSubmit)} 
-            isLoading={isSubmitting} 
-            className="rounded bg-primary px-8 py-2 font-bold text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20"
+
+          {/* Botón Guardar — dispara el submit del form */}
+          <button
+            type="button"
+            onClick={handleSubmit(onSubmit)}
+            disabled={isSubmitting}
+            className="inline-flex items-center gap-2 rounded bg-primary px-8 py-2 font-bold text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20 text-white hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            SAVE_CHANGES
-          </Button>
+            {isSubmitting ? (
+              <>
+                <span className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                SAVING...
+              </>
+            ) : (
+              'SAVE_CHANGES'
+            )}
+          </button>
         </div>
       </div>
+
+      {/* Error global */}
+      {errorMessage && (
+        <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-semibold">
+          {errorMessage}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
           {/* Inputs Base */}
           <section className="bg-surface-dark p-6 rounded-lg border border-border-dark space-y-6">
             <h3 className="text-xs font-bold flex items-center gap-2 uppercase tracking-widest text-primary">
-              <Info size={14} /> Base Configuration
+              Base Configuration
             </h3>
             <div className="space-y-4">
               <div>
                 <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">Internal Title</label>
-                <input {...register('title')} className="w-full bg-background-dark border border-border-dark rounded px-4 py-3 text-sm focus:border-primary outline-none transition-all text-white" />
+                <input
+                  {...register('title')}
+                  className={`w-full bg-background-dark border rounded px-4 py-3 text-sm outline-none transition-all text-white ${errors.title ? 'border-red-500 focus:border-red-500' : 'border-border-dark focus:border-primary'}`}
+                />
+                {errors.title && <p className="text-xs text-red-500 mt-1">{errors.title.message}</p>}
               </div>
               <div>
                 <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">Executive Summary</label>
-                <textarea {...register('shortDescription')} className="w-full bg-background-dark border border-border-dark rounded px-4 py-3 text-sm focus:border-primary outline-none transition-all resize-y min-h-[80px] text-slate-300" />
+                <textarea
+                  {...register('shortDescription')}
+                  className={`w-full bg-background-dark border rounded px-4 py-3 text-sm outline-none transition-all resize-y min-h-[80px] text-slate-300 ${errors.shortDescription ? 'border-red-500' : 'border-border-dark focus:border-primary'}`}
+                />
+                {errors.shortDescription && <p className="text-xs text-red-500 mt-1">{errors.shortDescription.message}</p>}
               </div>
             </div>
           </section>
 
-          {/* Editor Markdown Profesional */}
+          {/* Editor Markdown */}
           <section className="bg-surface-dark p-6 rounded-lg border border-border-dark space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-xs font-bold flex items-center gap-2 uppercase tracking-widest text-primary">
@@ -134,7 +166,7 @@ export const ProjectForm = ({ initialData, token }: { initialData?: Project | nu
 
             <div className="border border-border-dark rounded overflow-hidden bg-background-dark">
               {!previewMode ? (
-                <textarea 
+                <textarea
                   {...register('longDescription')}
                   className="w-full p-6 text-sm font-mono focus:ring-0 outline-none border-none bg-transparent resize-y min-h-[400px] text-slate-300 leading-relaxed"
                   placeholder="# Enter Markdown..."
@@ -145,10 +177,11 @@ export const ProjectForm = ({ initialData, token }: { initialData?: Project | nu
                 </div>
               )}
             </div>
+            {errors.longDescription && <p className="text-xs text-red-500">{errors.longDescription.message}</p>}
           </section>
         </div>
 
-        {/* Sidebar Lateral */}
+        {/* Sidebar */}
         <div className="space-y-6">
           <section className="bg-surface-dark p-6 rounded-lg border border-border-dark space-y-5">
             <h3 className="text-xs font-bold flex items-center gap-2 uppercase tracking-widest text-primary">
@@ -161,14 +194,15 @@ export const ProjectForm = ({ initialData, token }: { initialData?: Project | nu
                 <Terminal size={24} className="text-slate-700" />
               )}
             </div>
-            <Input label="Source URL" {...register('thumbnail')} error={errors.thumbnail?.message} className="bg-background-dark border-border-dark rounded" />
+            <Input label="Source URL" {...register('thumbnail')} error={errors.thumbnail?.message} />
           </section>
 
           <section className="bg-surface-dark p-6 rounded-lg border border-border-dark space-y-4">
             <h3 className="text-xs font-bold uppercase tracking-widest text-primary">Endpoints & Tags</h3>
-            <Input label="GitHub" {...register('repoLink')} placeholder="https://github.com/..." />
-            <Input label="Production" {...register('demoLink')} placeholder="https://..." />
+            <Input label="GitHub" {...register('repoLink')} placeholder="https://github.com/..." error={errors.repoLink?.message} />
+            <Input label="Production" {...register('demoLink')} placeholder="https://..." error={errors.demoLink?.message} />
             <Input label="Stack (CSV)" {...register('tags')} placeholder="Kotlin, Compose, NestJS" />
+            <Input label="Gallery URLs (CSV)" {...register('gallery')} placeholder="https://img1.com, https://img2.com" />
           </section>
         </div>
       </div>

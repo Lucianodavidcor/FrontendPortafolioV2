@@ -12,7 +12,7 @@ export const Header = () => {
           <div className="bg-primary p-1 rounded-lg transition-transform group-hover:rotate-45 flex items-center justify-center">
             <Infinity className="text-white w-5 h-5" />
           </div>
-          <span className="text-xl font-bold tracking-tighter dark:text-white uppercase">ALEX.D</span>
+          <span className="text-xl font-bold tracking-tighter dark:text-white uppercase">LYCHEED</span>
         </Link>
 
         {/* Links de Navegación (Desktop) */}
@@ -20,12 +20,11 @@ export const Header = () => {
           <a href="#proyectos" className="text-sm font-medium hover:text-primary transition-colors">Proyectos</a>
           <a href="#habilidades" className="text-sm font-medium hover:text-primary transition-colors">Habilidades</a>
           <a href="#experiencia" className="text-sm font-medium hover:text-primary transition-colors">Experiencia</a>
-          <a href="#about" className="text-sm font-medium hover:text-primary transition-colors">Sobre mí</a>
         </div>
 
         {/* Botones de Acción */}
         <div className="flex items-center gap-4">
-          <a href="/cv.pdf" target="_blank" rel="noreferrer" className="hidden sm:flex items-center gap-2 bg-white dark:bg-slate-800 text-primary dark:text-white px-5 py-2 rounded-full text-sm font-bold border-2 border-primary/20 hover:border-primary/50 transition-all">
+          <a href="/CV-Luciano-Cortez.pdf" target="_blank" rel="noreferrer" className="hidden sm:flex items-center gap-2 bg-white dark:bg-slate-800 text-primary dark:text-white px-5 py-2 rounded-full text-sm font-bold border-2 border-primary/20 hover:border-primary/50 transition-all">
             <Download className="w-4 h-4" />
             Descargar CV
           </a>
