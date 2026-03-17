@@ -1,32 +1,31 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, ExternalLink, Github, LayoutTemplate } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Github } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { fetchApi } from '@/lib/api';
 import { ApiResponse, Project } from '@/types/api';
+// Importamos el nuevo componente de galería
+import { ProjectGalleryClient } from '@/components/project/ProjectGalleryClient';
 
 interface ProjectDetailPageProps {
-  params: Promise<{ id: string }>; // En versiones recientes de Next.js, params es una promesa
+  params: Promise<{ id: string }>;
 }
 
 export default async function ProjectDetail({ params }: ProjectDetailPageProps) {
-  // 1. Resolvemos los parámetros de la URL
   const resolvedParams = await params;
   const { id } = resolvedParams;
 
-  // 2. Obtenemos los datos del proyecto
   let project: Project | null = null;
   
   try {
     const res = await fetchApi<ApiResponse<Project>>(`/projects/${id}`);
     project = res.data;
   } catch (error) {
-    // Si la API devuelve un 404 o un error, redirigimos a la página de "No Encontrado"
     notFound();
   }
 
-  // Doble validación por seguridad
   if (!project) {
     notFound();
   }
@@ -74,12 +73,16 @@ export default async function ProjectDetail({ params }: ProjectDetailPageProps) 
         <section className="max-w-7xl mx-auto px-6 py-20">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
             
-            {/* Descripción Larga */}
+            {/* Descripción Larga (Markdown) */}
             <div className="lg:col-span-2 space-y-8">
               <div>
                 <h2 className="text-3xl font-bold mb-6 text-primary">Resumen</h2>
-                <div className="prose prose-slate dark:prose-invert max-w-none text-lg text-slate-600 dark:text-slate-400 whitespace-pre-line leading-relaxed">
-                  {project.longDescription || "No hay una descripción detallada para este proyecto."}
+                <div className="prose prose-slate dark:prose-invert max-w-none text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
+                  {project.longDescription ? (
+                    <ReactMarkdown>{project.longDescription}</ReactMarkdown>
+                  ) : (
+                    "No hay una descripción detallada para este proyecto."
+                  )}
                 </div>
               </div>
             </div>
@@ -123,24 +126,8 @@ export default async function ProjectDetail({ params }: ProjectDetailPageProps) 
           </div>
         </section>
 
-        {/* Galería (Solo si hay imágenes en el array) */}
-        {project.gallery && project.gallery.length > 0 && (
-          <section className="bg-slate-100 dark:bg-slate-900/50 py-24">
-            <div className="max-w-7xl mx-auto px-6">
-              <div className="mb-16">
-                <h2 className="text-3xl font-bold mb-4">Galería Visual</h2>
-                <div className="h-1.5 w-24 bg-primary rounded-full"></div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {project.gallery.map((img, idx) => (
-                  <div key={idx} className="aspect-video w-full rounded-2xl overflow-hidden bg-slate-200 dark:bg-slate-800 shadow-md">
-                    <img src={img} alt={`Captura ${idx + 1}`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
+        {/* Nueva Galería Visual Interactiva */}
+        <ProjectGalleryClient images={project.gallery || []} />
       </main>
 
       <Footer />

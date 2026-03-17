@@ -12,8 +12,8 @@ const spaceGrotesk = Space_Grotesk({
 })
 
 export const metadata: Metadata = {
-  title: 'ALEX.D | Portafolio',
-  description: 'Diseñador multidisciplinar y desarrollador creativo.',
+  title: 'Luciano Cortez | Portafolio',
+  description: 'Desarrollador de software con talento para crear soluciones elegantes en diferentes plataformas.',
 }
 
 export default function RootLayout({
