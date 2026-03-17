@@ -1,34 +1,53 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/container-queries";
+
+@theme {
+  /* Colores personalizados */
+  --color-primary: #0d33f2;
+  --color-background-light: #f5f6f8;
+  --color-background-dark: #101322;
+
+  /* Fuente personalizada (inyectada desde layout.tsx) */
+  --font-display: var(--font-space-grotesk), sans-serif;
+
+  /* Modificamos los bordes por defecto si lo deseas, aunque v4 ya tiene buenos defaults */
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+}
+
+/* Configuramos el modo oscuro manual por clase, tal como lo pedía tu template */
+@custom-variant dark (&:is(.dark *));
 
 @layer base {
   body {
-    @apply bg-background-light text-slate-900 transition-colors duration-300;
+    background-color: var(--color-background-light);
+    color: var(--color-slate-900);
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
   }
   
   .dark body {
-    @apply bg-background-dark text-slate-100;
+    background-color: var(--color-background-dark);
+    color: var(--color-slate-100);
   }
 }
 
-@layer components {
-  .glass-card {
-    background: rgba(13, 51, 242, 0.05);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  
-  .glass-panel {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-  }
+@utility glass-card {
+  background: rgba(13, 51, 242, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-@layer utilities {
-  .text-stroke {
-    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
-    color: transparent;
-  }
+@utility glass-panel {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+@utility text-stroke {
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+  color: transparent;
 }
