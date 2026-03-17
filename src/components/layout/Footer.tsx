@@ -37,7 +37,7 @@ export const Footer = ({ socialLinks = [], authorName = 'Portfolio' }: FooterPro
     <footer className="relative overflow-hidden border-t border-border-dark bg-background-dark">
 
       {/* Glow de fondo */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-48 bg-primary/5 rounded-full blur-[80px] pointer-events-none" />
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-150 h-48 bg-primary/5 rounded-full blur-[80px] pointer-events-none" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
 

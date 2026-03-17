@@ -10,7 +10,7 @@ const NAV_LINKS = [
   { label: 'Experiencia', href: '#experiencia' },
 ];
 
-const cvUrl = process.env.NEXT_PUBLIC_CV_URL || '/cv.pdf';
+const cvUrl = process.env.NEXT_PUBLIC_CV_URL || '/CV-Luciano-Cortez.pdf';
 
 export const Header = () => {
   const [scrolled, setScrolled]   = useState(false);
@@ -59,12 +59,12 @@ export const Header = () => {
 
           {/* ── Logo ── */}
           <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-            <div className={`p-1.5 rounded-xl transition-all duration-300 group-hover:rotate-[20deg] group-hover:scale-110
+            <div className={`p-1.5 rounded-xl transition-all duration-300 group-hover:rotate-20 group-hover:scale-110
               ${scrolled ? 'bg-primary' : 'bg-primary/90'}`}>
               <Infinity className="text-white w-5 h-5" />
             </div>
             <span className="text-lg font-black tracking-tighter uppercase text-white">
-              ALEX<span className="text-primary">.</span>D
+              Luciano<span className="text-primary">.</span>C
             </span>
           </Link>
 
