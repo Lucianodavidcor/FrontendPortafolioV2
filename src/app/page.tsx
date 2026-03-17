@@ -5,6 +5,7 @@ import { ArrowRight, DownloadCloud } from 'lucide-react';
 import { ProjectsSection } from '@/components/sections/ProjectsSection';
 import { SkillsSection } from '@/components/sections/SkillsSection';
 import { ExperienceSection } from '@/components/sections/ExperienceSection';
+import { ContactSection } from '@/components/sections/ContactSection';
 
 import { fetchApi } from '@/lib/api';
 import { PaginatedApiResponse, ApiResponse, Project, Skill, Experience, Profile } from '@/types/api';
@@ -93,6 +94,7 @@ export default async function Home() {
         <ProjectsSection projects={projects} />
         <SkillsSection skills={skills} />
         <ExperienceSection experiences={experiences} />
+        <ContactSection />
         
       </main>
 
