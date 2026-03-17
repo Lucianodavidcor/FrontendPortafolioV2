@@ -5,7 +5,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Layers, LayoutDashboard, FolderOpen, UserCircle, Inbox, Settings, Briefcase } from 'lucide-react';
 
-export const AdminSidebar = () => {
+interface AdminSidebarProps {
+  userName: string;
+  userEmail: string;
+  unreadMessages: number;
+}
+
+export const AdminSidebar = ({ userName, userEmail, unreadMessages }: AdminSidebarProps) => {
   const pathname = usePathname();
 
   const navLinks = [
@@ -13,7 +19,8 @@ export const AdminSidebar = () => {
     { name: 'Proyectos', href: '/admin/projects', icon: FolderOpen },
     { name: 'Experiencia', href: '/admin/experience', icon: Briefcase },
     { name: 'Bio & Skills', href: '/admin/bio-skills', icon: UserCircle },
-    { name: 'Bandeja', href: '/admin/messages', icon: Inbox, badge: 3 },
+    // El badge ahora es dinámico y solo se muestra si hay mensajes > 0
+    { name: 'Bandeja', href: '/admin/messages', icon: Inbox, badge: unreadMessages > 0 ? unreadMessages : undefined },
     { name: 'Ajustes', href: '/admin/settings', icon: Settings },
   ];
 
@@ -47,8 +54,8 @@ export const AdminSidebar = () => {
               <Icon className={`w-5 h-5 ${isActive ? 'text-primary' : ''}`} />
               <span className="text-sm font-semibold">{link.name}</span>
               
-              {link.badge && (
-                <span className="ml-auto bg-primary text-white text-[10px] px-1.5 py-0.5 rounded-full">
+              {link.badge !== undefined && (
+                <span className="ml-auto bg-primary text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold">
                   {link.badge}
                 </span>
               )}
@@ -57,13 +64,17 @@ export const AdminSidebar = () => {
         })}
       </nav>
 
-      {/* Perfil del Usuario */}
+      {/* Perfil del Usuario dinámico */}
       <div className="p-4 border-t border-slate-200 dark:border-primary/10">
         <div className="flex items-center gap-3 p-2">
-          <div className="w-10 h-10 rounded-full bg-slate-300 dark:bg-primary/30 bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&auto=format&fit=crop')" }}></div>
+          <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+            <span className="text-primary font-bold text-sm">
+              {userName.substring(0, 2).toUpperCase()}
+            </span>
+          </div>
           <div className="overflow-hidden">
-            <p className="text-sm font-bold truncate">Alex Designer</p>
-            <p className="text-xs text-slate-500 truncate">alex@portfolio.com</p>
+            <p className="text-sm font-bold truncate">{userName}</p>
+            <p className="text-xs text-slate-500 truncate">{userEmail}</p>
           </div>
         </div>
       </div>

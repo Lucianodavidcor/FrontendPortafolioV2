@@ -1,16 +1,26 @@
-import NextAuth from "next-auth"
+import NextAuth, { DefaultSession } from "next-auth"
 
 declare module "next-auth" {
-  // Extendemos la sesión para que TypeScript sepa que incluye el token
   interface Session {
     user: {
       token: string;
-    }
+      name?: string | null;
+      email?: string | null;
+    } & DefaultSession["user"]
   }
 
-  // Extendemos el usuario que devolvemos en el authorize
   interface User {
     id: string;
     token: string;
+    name?: string | null;
+    email?: string | null;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    accessToken: string;
+    name?: string | null;
+    email?: string | null;
   }
 }
