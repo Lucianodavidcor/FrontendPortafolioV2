@@ -53,7 +53,7 @@ export const ExperienceSection = ({ experiences }: ExperienceSectionProps) => {
         </div>
 
         {/* Timeline Desktop */}
-        <div className="lg:col-span-8 relative space-y-12 before:absolute before:left-0 md:before:left-1/2 before:top-0 before:h-full before:w-[2px] before:bg-gradient-to-b before:from-primary before:via-primary/50 before:to-transparent before:-ml-[1px] hidden md:block">
+        <div className="lg:col-span-8 relative space-y-12 before:absolute before:left-0 md:before:left-1/2 before:top-0 before:h-full before:w-0.5 before:bg-linear-to-b before:from-primary before:via-primary/50 before:to-transparent before:-ml-px hidden md:block">
           {experiences.map((exp, index) => (
             <div
               key={exp.id}
@@ -91,7 +91,7 @@ export const ExperienceSection = ({ experiences }: ExperienceSectionProps) => {
         </div>
 
         {/* Timeline Mobile */}
-        <div className="md:hidden space-y-8 relative before:absolute before:left-4 before:top-0 before:h-full before:w-[2px] before:bg-primary/20 lg:col-span-8">
+        <div className="md:hidden space-y-8 relative before:absolute before:left-4 before:top-0 before:h-full before:w-0.5 before:bg-primary/20 lg:col-span-8">
           {experiences.map((exp, index) => (
             <div key={exp.id} className="relative pl-12 space-y-2">
               <div

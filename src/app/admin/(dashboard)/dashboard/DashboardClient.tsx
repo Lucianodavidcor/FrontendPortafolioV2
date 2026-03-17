@@ -71,9 +71,9 @@ function Bar({ height, label, visits, messages, index }: {
           style={{ height: animated ? `${height}%` : '4px', minHeight: '4px' }}
         >
           {/* Brillo interior */}
-          <div className="absolute inset-0 bg-gradient-to-t from-transparent via-primary/10 to-primary/30" />
+          <div className="absolute inset-0 bg-linear-to-t from-transparent via-primary/10 to-primary/30" />
           {/* Línea top */}
-          <div className="absolute top-0 left-0 right-0 h-[2px] bg-primary/70" />
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-primary/70" />
         </div>
       </div>
 

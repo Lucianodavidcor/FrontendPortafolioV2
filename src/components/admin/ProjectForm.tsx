@@ -145,7 +145,7 @@ export const ProjectForm = ({ initialData, token }: { initialData?: Project | nu
                 <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">Executive Summary</label>
                 <textarea
                   {...register('shortDescription')}
-                  className={`w-full bg-background-dark border rounded px-4 py-3 text-sm outline-none transition-all resize-y min-h-[80px] text-slate-300 ${errors.shortDescription ? 'border-red-500' : 'border-border-dark focus:border-primary'}`}
+                  className={`w-full bg-background-dark border rounded px-4 py-3 text-sm outline-none transition-all resize-y min-h-20 text-slate-300 ${errors.shortDescription ? 'border-red-500' : 'border-border-dark focus:border-primary'}`}
                 />
                 {errors.shortDescription && <p className="text-xs text-red-500 mt-1">{errors.shortDescription.message}</p>}
               </div>
@@ -168,11 +168,11 @@ export const ProjectForm = ({ initialData, token }: { initialData?: Project | nu
               {!previewMode ? (
                 <textarea
                   {...register('longDescription')}
-                  className="w-full p-6 text-sm font-mono focus:ring-0 outline-none border-none bg-transparent resize-y min-h-[400px] text-slate-300 leading-relaxed"
+                  className="w-full p-6 text-sm font-mono focus:ring-0 outline-none border-none bg-transparent resize-y min-h-100 text-slate-300 leading-relaxed"
                   placeholder="# Enter Markdown..."
                 />
               ) : (
-                <div className="p-8 prose prose-invert prose-blue max-w-none min-h-[400px] bg-background-dark">
+                <div className="p-8 prose prose-invert prose-blue max-w-none min-h-100 bg-background-dark">
                   <ReactMarkdown>{longDescriptionContent || '_No data to render_'}</ReactMarkdown>
                 </div>
               )}

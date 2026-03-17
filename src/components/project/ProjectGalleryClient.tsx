@@ -81,11 +81,11 @@ export const ProjectGalleryClient = ({ images }: ProjectGalleryClientProps) => {
 
       {/* Lightbox / Visor Pro */}
       {selectedIndex !== null && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background-dark/95 backdrop-blur-md animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-100 flex items-center justify-center bg-background-dark/95 backdrop-blur-md animate-in fade-in duration-300">
           {/* Botón Cerrar */}
           <button 
             onClick={closeLightbox}
-            className="absolute top-6 right-6 z-[110] p-3 text-slate-400 hover:text-white transition-colors"
+            className="absolute top-6 right-6 z-110 p-3 text-slate-400 hover:text-white transition-colors"
           >
             <X size={32} strokeWidth={1.5} />
           </button>
@@ -93,14 +93,14 @@ export const ProjectGalleryClient = ({ images }: ProjectGalleryClientProps) => {
           {/* Navegación */}
           <button 
             onClick={prevImage}
-            className="absolute left-4 z-[110] p-4 text-slate-400 hover:text-primary transition-all hover:scale-110"
+            className="absolute left-4 z-110 p-4 text-slate-400 hover:text-primary transition-all hover:scale-110"
           >
             <ChevronLeft size={48} strokeWidth={1} />
           </button>
 
           <button 
             onClick={nextImage}
-            className="absolute right-4 z-[110] p-4 text-slate-400 hover:text-primary transition-all hover:scale-110"
+            className="absolute right-4 z-110 p-4 text-slate-400 hover:text-primary transition-all hover:scale-110"
           >
             <ChevronRight size={48} strokeWidth={1} />
           </button>

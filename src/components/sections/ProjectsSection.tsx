@@ -31,14 +31,14 @@ export const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
             <Link 
               href={`/projects/${project.id}`} 
               key={project.id}
-              className={`${isLarge ? 'md:col-span-8 aspect-[16/10]' : 'md:col-span-4 aspect-[9/10] md:aspect-auto'} group relative rounded-3xl overflow-hidden cursor-pointer bg-slate-200 dark:bg-slate-800`}
+              className={`${isLarge ? 'md:col-span-8 aspect-16/10' : 'md:col-span-4 aspect-9/10 md:aspect-auto'} group relative rounded-3xl overflow-hidden cursor-pointer bg-slate-200 dark:bg-slate-800`}
             >
               <img 
                 src={project.thumbnail} 
                 alt={project.title} 
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-background-dark/90 via-background-dark/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
+              <div className="absolute inset-0 bg-linear-to-t from-background-dark/90 via-background-dark/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
                 {project.tags && project.tags.length > 0 && (
                   <span className="text-primary font-bold text-xs uppercase mb-2">
                     {project.tags.join(' • ')}

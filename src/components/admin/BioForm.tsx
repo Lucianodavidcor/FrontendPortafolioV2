@@ -158,7 +158,7 @@ export const BioForm = ({ initialData, token }: BioFormProps) => {
                     error={errors.socialLinks?.[index]?.platform?.message}
                   />
                 </div>
-                <div className="flex-[2] w-full">
+                <div className="flex-2 w-full">
                   <Input 
                     label="URL" 
                     placeholder="https://..." 

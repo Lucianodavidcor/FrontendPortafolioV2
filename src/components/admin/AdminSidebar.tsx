@@ -34,7 +34,7 @@ export const AdminSidebar = ({ userName, userEmail, unreadMessages }: AdminSideb
   ];
 
   return (
-    <aside className="w-64 flex-shrink-0 bg-slate-50 dark:bg-slate-900/50 border-r border-slate-200 dark:border-primary/20 flex flex-col">
+    <aside className="w-64 shrink-0 bg-slate-50 dark:bg-slate-900/50 border-r border-slate-200 dark:border-primary/20 flex flex-col">
       
       {/* Logo */}
       <div className="p-6 flex items-center gap-3">

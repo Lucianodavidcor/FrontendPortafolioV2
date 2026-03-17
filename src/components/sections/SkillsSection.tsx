@@ -19,7 +19,7 @@ export const SkillsSection = ({ skills }: SkillsSectionProps) => {
   };
 
   return (
-    <section id="habilidades" className="py-24 bg-primary/5 dark:bg-primary/[0.02]">
+    <section id="habilidades" className="py-24 bg-primary/5 dark:bg-primary/2">
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         
         {/* Tarjetas de Categorías */}

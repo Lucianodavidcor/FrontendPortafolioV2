@@ -56,7 +56,7 @@ export default function LoginPage() {
     <div className="min-h-screen w-full flex items-center justify-center p-6 relative">
       {/* Fondo decorativo (coherente con el portafolio) */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/20 rounded-full blur-[120px]"></div>
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-200 h-100 bg-primary/20 rounded-full blur-[120px]"></div>
       </div>
 
       <div className="relative z-10 w-full max-w-md">
@@ -71,7 +71,7 @@ export default function LoginPage() {
         </div>
 
         {/* Tarjeta de Login */}
-        <div className="glass-card p-8 sm:p-10 rounded-[2rem] border-primary/20 shadow-2xl relative overflow-hidden">
+        <div className="glass-card p-8 sm:p-10 rounded-4xl border-primary/20 shadow-2xl relative overflow-hidden">
           
           <div className="mb-8 text-center">
             <h1 className="text-2xl font-bold mb-2">Bienvenido de nuevo</h1>

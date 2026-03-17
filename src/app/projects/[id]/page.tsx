@@ -36,12 +36,12 @@ export default async function ProjectDetail({ params }: ProjectDetailPageProps) 
       
       <main className="flex-1">
         {/* Hero Section del Proyecto */}
-        <section className="relative w-full h-[716px] min-h-[500px] overflow-hidden">
+        <section className="relative w-full h-179 min-h-125 overflow-hidden">
           <div 
             className="absolute inset-0 bg-cover bg-center" 
             style={{ backgroundImage: `url('${project.thumbnail}')` }}
           ></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/40 to-transparent"></div>
+          <div className="absolute inset-0 bg-linear-to-t from-background-dark via-background-dark/40 to-transparent"></div>
           
           <div className="absolute top-24 left-6 md:left-16 z-10">
             <Link href="/" className="flex items-center gap-2 text-white/70 hover:text-white transition-colors bg-black/20 backdrop-blur-md px-4 py-2 rounded-full text-sm font-bold">

@@ -95,15 +95,15 @@ export default async function Home() {
             </div>
 
             <div className="relative flex justify-center lg:justify-end">
-              <div className="relative w-72 h-96 md:w-96 md:h-[500px] rounded-3xl overflow-hidden shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500">
+              <div className="relative w-72 h-96 md:w-96 md:h-125 rounded-3xl overflow-hidden shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500">
                 <img
                   src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop"
                   alt="Retrato"
                   className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-background-dark/80 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-linear-to-t from-background-dark/80 to-transparent pointer-events-none" />
               </div>
-              <div className="absolute -bottom-6 -left-6 md:-left-12 glass-card p-6 rounded-2xl shadow-xl max-w-[200px]">
+              <div className="absolute -bottom-6 -left-6 md:-left-12 glass-card p-6 rounded-2xl shadow-xl max-w-50">
                 <p className="text-xs font-bold text-primary mb-2 uppercase tracking-widest">Rol Actual</p>
                 <p className="text-sm font-medium">{profile?.title || 'Desarrollador & Diseñador'}</p>
               </div>
