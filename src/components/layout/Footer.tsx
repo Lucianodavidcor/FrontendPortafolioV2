@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
-import { Infinity, Github, Linkedin, Twitter, Instagram, Globe, ExternalLink, ArrowUpRight, Mail } from 'lucide-react';
+import Image from 'next/image';
+import { Github, Linkedin, Twitter, Instagram, Globe, ExternalLink, ArrowUpRight, Mail } from 'lucide-react';
 
 interface SocialLink {
   platform: string;
@@ -12,7 +13,6 @@ interface FooterProps {
   authorName?: string;
 }
 
-// Mapeo de plataformas a iconos de Lucide
 const getPlatformIcon = (platform: string) => {
   const p = platform.toLowerCase();
   if (p.includes('github'))    return <Github className="w-4 h-4" />;
@@ -24,10 +24,10 @@ const getPlatformIcon = (platform: string) => {
 };
 
 const NAV_LINKS = [
-  { label: 'Proyectos', href: '#proyectos' },
+  { label: 'Proyectos',   href: '#proyectos' },
   { label: 'Habilidades', href: '#habilidades' },
   { label: 'Experiencia', href: '#experiencia' },
-  { label: 'Contacto', href: '#contact' },
+  { label: 'Contacto',    href: '#contact' },
 ];
 
 export const Footer = ({ socialLinks = [], authorName = 'Portfolio' }: FooterProps) => {
@@ -47,10 +47,16 @@ export const Footer = ({ socialLinks = [], authorName = 'Portfolio' }: FooterPro
           {/* Columna: Marca */}
           <div className="md:col-span-5 space-y-6">
             <Link href="/" className="inline-flex items-center gap-3 group">
-              <div className="bg-primary p-2 rounded-xl group-hover:scale-110 transition-transform duration-300">
-                <Infinity className="text-white w-5 h-5" />
+              {/* Logo real */}
+              <div className="relative w-10 h-10 transition-transform duration-300 group-hover:scale-110">
+                <Image
+                  src="/logoLycheedOS.png"
+                  alt="LycheedOS Logo"
+                  fill
+                  className="object-contain"
+                />
               </div>
-              <span className="text-2xl font-black tracking-tighter uppercase text-white">
+              <span className="text-xl font-black tracking-tighter uppercase text-white">
                 {authorName}
               </span>
             </Link>
@@ -59,7 +65,7 @@ export const Footer = ({ socialLinks = [], authorName = 'Portfolio' }: FooterPro
               Construyendo interfaces que no se olvidan, una línea de código a la vez.
             </p>
 
-            {/* Redes sociales dinámicas de la DB */}
+            {/* Redes dinámicas de la DB */}
             {socialLinks.length > 0 && (
               <div className="flex flex-wrap gap-2 pt-2">
                 {socialLinks.map((link, i) => (
@@ -81,14 +87,11 @@ export const Footer = ({ socialLinks = [], authorName = 'Portfolio' }: FooterPro
               </div>
             )}
 
-            {/* Fallback si no hay redes en la DB */}
+            {/* Fallback sin redes */}
             {socialLinks.length === 0 && (
               <div className="flex gap-3 pt-2">
                 {[Github, Linkedin, Twitter].map((Icon, i) => (
-                  <div
-                    key={i}
-                    className="w-9 h-9 rounded-xl border border-border-dark bg-surface-dark/40 flex items-center justify-center text-slate-700"
-                  >
+                  <div key={i} className="w-9 h-9 rounded-xl border border-border-dark bg-surface-dark/40 flex items-center justify-center text-slate-700">
                     <Icon className="w-4 h-4" />
                   </div>
                 ))}
