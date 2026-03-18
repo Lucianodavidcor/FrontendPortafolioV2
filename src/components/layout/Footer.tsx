@@ -1,6 +1,9 @@
+"use client";
+
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { Github, Linkedin, Twitter, Instagram, Globe, ExternalLink, ArrowUpRight, Mail } from 'lucide-react';
 
 interface SocialLink {
@@ -11,17 +14,15 @@ interface SocialLink {
 interface FooterProps {
   socialLinks?: SocialLink[];
   authorName?: string;
-  // Si se pasa isHome=false los links de nav apuntan a /#seccion en lugar de #seccion
-  isHome?: boolean;
 }
 
 const getPlatformIcon = (platform: string) => {
   const p = platform.toLowerCase();
-  if (p.includes('github'))                        return <Github className="w-4 h-4" />;
-  if (p.includes('linkedin'))                      return <Linkedin className="w-4 h-4" />;
+  if (p.includes('github'))                         return <Github className="w-4 h-4" />;
+  if (p.includes('linkedin'))                       return <Linkedin className="w-4 h-4" />;
   if (p.includes('twitter') || p.includes('x.com')) return <Twitter className="w-4 h-4" />;
-  if (p.includes('instagram'))                     return <Instagram className="w-4 h-4" />;
-  if (p.includes('mail') || p.includes('email'))   return <Mail className="w-4 h-4" />;
+  if (p.includes('instagram'))                      return <Instagram className="w-4 h-4" />;
+  if (p.includes('mail') || p.includes('email'))    return <Mail className="w-4 h-4" />;
   return <Globe className="w-4 h-4" />;
 };
 
@@ -32,9 +33,12 @@ const NAV_LINKS = [
   { label: 'Contacto',    hash: 'contact' },
 ];
 
-export const Footer = ({ socialLinks = [], authorName = 'Portfolio', isHome = true }: FooterProps) => {
-  const year = new Date().getFullYear();
+export const Footer = ({ socialLinks = [], authorName = 'Portfolio' }: FooterProps) => {
+  const pathname = usePathname();
+  const isHome   = pathname === '/';
+  const year     = new Date().getFullYear();
 
+  // En home usa ancla local (#seccion), fuera de home navega al home y luego a la sección (/#seccion)
   const getHref = (hash: string) => isHome ? `#${hash}` : `/#${hash}`;
 
   return (
