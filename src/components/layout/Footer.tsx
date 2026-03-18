@@ -11,32 +11,35 @@ interface SocialLink {
 interface FooterProps {
   socialLinks?: SocialLink[];
   authorName?: string;
+  // Si se pasa isHome=false los links de nav apuntan a /#seccion en lugar de #seccion
+  isHome?: boolean;
 }
 
 const getPlatformIcon = (platform: string) => {
   const p = platform.toLowerCase();
-  if (p.includes('github'))    return <Github className="w-4 h-4" />;
-  if (p.includes('linkedin'))  return <Linkedin className="w-4 h-4" />;
+  if (p.includes('github'))                        return <Github className="w-4 h-4" />;
+  if (p.includes('linkedin'))                      return <Linkedin className="w-4 h-4" />;
   if (p.includes('twitter') || p.includes('x.com')) return <Twitter className="w-4 h-4" />;
-  if (p.includes('instagram')) return <Instagram className="w-4 h-4" />;
-  if (p.includes('mail') || p.includes('email')) return <Mail className="w-4 h-4" />;
+  if (p.includes('instagram'))                     return <Instagram className="w-4 h-4" />;
+  if (p.includes('mail') || p.includes('email'))   return <Mail className="w-4 h-4" />;
   return <Globe className="w-4 h-4" />;
 };
 
 const NAV_LINKS = [
-  { label: 'Proyectos',   href: '#proyectos' },
-  { label: 'Habilidades', href: '#habilidades' },
-  { label: 'Experiencia', href: '#experiencia' },
-  { label: 'Contacto',    href: '#contact' },
+  { label: 'Proyectos',   hash: 'proyectos' },
+  { label: 'Habilidades', hash: 'habilidades' },
+  { label: 'Experiencia', hash: 'experiencia' },
+  { label: 'Contacto',    hash: 'contact' },
 ];
 
-export const Footer = ({ socialLinks = [], authorName = 'Portfolio' }: FooterProps) => {
+export const Footer = ({ socialLinks = [], authorName = 'Portfolio', isHome = true }: FooterProps) => {
   const year = new Date().getFullYear();
+
+  const getHref = (hash: string) => isHome ? `#${hash}` : `/#${hash}`;
 
   return (
     <footer className="relative overflow-hidden border-t border-border-dark bg-background-dark">
 
-      {/* Glow de fondo */}
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-150 h-48 bg-primary/5 rounded-full blur-[80px] pointer-events-none" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
@@ -44,10 +47,9 @@ export const Footer = ({ socialLinks = [], authorName = 'Portfolio' }: FooterPro
         {/* ── Franja superior ── */}
         <div className="py-16 grid grid-cols-1 md:grid-cols-12 gap-12 border-b border-border-dark">
 
-          {/* Columna: Marca */}
+          {/* Marca */}
           <div className="md:col-span-5 space-y-6">
             <Link href="/" className="inline-flex items-center gap-3 group">
-              {/* Logo real */}
               <div className="relative w-10 h-10 transition-transform duration-300 group-hover:scale-110">
                 <Image
                   src="/logoLycheedOS.png"
@@ -66,7 +68,7 @@ export const Footer = ({ socialLinks = [], authorName = 'Portfolio' }: FooterPro
             </p>
 
             {/* Redes dinámicas de la DB */}
-            {socialLinks.length > 0 && (
+            {socialLinks.length > 0 ? (
               <div className="flex flex-wrap gap-2 pt-2">
                 {socialLinks.map((link, i) => (
                   <a
@@ -85,10 +87,7 @@ export const Footer = ({ socialLinks = [], authorName = 'Portfolio' }: FooterPro
                   </a>
                 ))}
               </div>
-            )}
-
-            {/* Fallback sin redes */}
-            {socialLinks.length === 0 && (
+            ) : (
               <div className="flex gap-3 pt-2">
                 {[Github, Linkedin, Twitter].map((Icon, i) => (
                   <div key={i} className="w-9 h-9 rounded-xl border border-border-dark bg-surface-dark/40 flex items-center justify-center text-slate-700">
@@ -99,32 +98,32 @@ export const Footer = ({ socialLinks = [], authorName = 'Portfolio' }: FooterPro
             )}
           </div>
 
-          {/* Columna: Navegación */}
+          {/* Navegación */}
           <div className="md:col-span-3 space-y-4">
             <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-primary">Navegación</p>
             <ul className="space-y-3">
-              {NAV_LINKS.map(link => (
-                <li key={link.label}>
+              {NAV_LINKS.map(({ label, hash }) => (
+                <li key={hash}>
                   <a
-                    href={link.href}
+                    href={getHref(hash)}
                     className="group flex items-center gap-2 text-sm text-slate-500 hover:text-white transition-colors font-medium"
                   >
                     <span className="w-4 h-px bg-border-dark group-hover:bg-primary group-hover:w-6 transition-all duration-300" />
-                    {link.label}
+                    {label}
                   </a>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Columna: CTA */}
+          {/* CTA */}
           <div className="md:col-span-4 space-y-4">
             <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-primary">¿Trabajamos juntos?</p>
             <p className="text-sm text-slate-500 leading-relaxed">
               Abierto a proyectos freelance, colaboraciones y oportunidades full-time.
             </p>
             <a
-              href="#contact"
+              href={getHref('contact')}
               className="inline-flex items-center gap-2 group px-6 py-3 rounded-xl bg-primary text-white text-sm font-bold hover:scale-105 transition-transform shadow-lg shadow-primary/20"
             >
               Hablemos

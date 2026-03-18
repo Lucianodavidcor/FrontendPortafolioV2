@@ -3,17 +3,21 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { Download, Menu, X, ArrowUpRight } from 'lucide-react';
 
-const NAV_LINKS = [
-  { label: 'Proyectos',   href: '#proyectos' },
-  { label: 'Habilidades', href: '#habilidades' },
-  { label: 'Experiencia', href: '#experiencia' },
+const NAV_ITEMS = [
+  { label: 'Proyectos',   hash: 'proyectos' },
+  { label: 'Habilidades', hash: 'habilidades' },
+  { label: 'Experiencia', hash: 'experiencia' },
+  { label: 'Sobre mí',    hash: 'about' },
 ];
 
-const cvUrl = process.env.NEXT_PUBLIC_CV_URL || '/CV-Luciano-Cortez.pdf';
+const cvUrl = process.env.NEXT_PUBLIC_CV_URL || '/cv.pdf';
 
 export const Header = () => {
+  const pathname                          = usePathname();
+  const isHome                            = pathname === '/';
   const [scrolled, setScrolled]           = useState(false);
   const [mobileOpen, setMobileOpen]       = useState(false);
   const [activeSection, setActiveSection] = useState('');
@@ -24,21 +28,27 @@ export const Header = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // IntersectionObserver solo tiene sentido en la home
   useEffect(() => {
-    const ids = NAV_LINKS.map(l => l.href.replace('#', ''));
+    if (!isHome) return;
     const observers: IntersectionObserver[] = [];
-    ids.forEach(id => {
-      const el = document.getElementById(id);
+    NAV_ITEMS.forEach(({ hash }) => {
+      const el = document.getElementById(hash);
       if (!el) return;
       const obs = new IntersectionObserver(
-        ([entry]) => { if (entry.isIntersecting) setActiveSection(id); },
+        ([entry]) => { if (entry.isIntersecting) setActiveSection(hash); },
         { rootMargin: '-40% 0px -50% 0px' }
       );
       obs.observe(el);
       observers.push(obs);
     });
     return () => observers.forEach(o => o.disconnect());
-  }, []);
+  }, [isHome]);
+
+  // Href inteligente: en home usa #hash, fuera de home navega a /#hash
+  const getHref = (hash: string) => isHome ? `#${hash}` : `/#${hash}`;
+
+  const isActive = (hash: string) => isHome && activeSection === hash;
 
   return (
     <>
@@ -70,26 +80,22 @@ export const Header = () => {
               ? 'bg-surface-dark/60 border border-border-dark'
               : 'bg-white/5 border border-white/10 backdrop-blur-sm'
             }`}>
-            {NAV_LINKS.map(link => {
-              const id       = link.href.replace('#', '');
-              const isActive = activeSection === id;
-              return (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  className={`relative px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200
-                    ${isActive
-                      ? 'text-white bg-primary/20'
-                      : 'text-slate-400 hover:text-white hover:bg-white/5'
-                    }`}
-                >
-                  {isActive && (
-                    <span className="absolute top-1.5 right-1.5 w-1 h-1 rounded-full bg-primary" />
-                  )}
-                  {link.label}
-                </a>
-              );
-            })}
+            {NAV_ITEMS.map(({ label, hash }) => (
+              <a
+                key={hash}
+                href={getHref(hash)}
+                className={`relative px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200
+                  ${isActive(hash)
+                    ? 'text-white bg-primary/20'
+                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  }`}
+              >
+                {isActive(hash) && (
+                  <span className="absolute top-1.5 right-1.5 w-1 h-1 rounded-full bg-primary" />
+                )}
+                {label}
+              </a>
+            ))}
           </div>
 
           {/* ── Acciones Desktop ── */}
@@ -109,7 +115,7 @@ export const Header = () => {
               CV
             </a>
             <a
-              href="#contact"
+              href={isHome ? '#contact' : '/#contact'}
               className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold bg-primary text-white hover:scale-105 transition-transform shadow-lg shadow-primary/25 group"
             >
               Contacto
@@ -155,26 +161,22 @@ export const Header = () => {
           </div>
 
           <nav className="flex-1 px-4 py-6 space-y-1">
-            {NAV_LINKS.map((link, i) => {
-              const id       = link.href.replace('#', '');
-              const isActive = activeSection === id;
-              return (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  style={{ transitionDelay: `${i * 40}ms` }}
-                  className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border
-                    ${isActive
-                      ? 'bg-primary/15 text-white border-primary/25'
-                      : 'text-slate-400 hover:text-white hover:bg-white/5 border-transparent'
-                    }`}
-                >
-                  <span>{link.label}</span>
-                  {isActive && <span className="w-1.5 h-1.5 rounded-full bg-primary" />}
-                </a>
-              );
-            })}
+            {NAV_ITEMS.map(({ label, hash }, i) => (
+              <a
+                key={hash}
+                href={getHref(hash)}
+                onClick={() => setMobileOpen(false)}
+                style={{ transitionDelay: `${i * 40}ms` }}
+                className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border
+                  ${isActive(hash)
+                    ? 'bg-primary/15 text-white border-primary/25'
+                    : 'text-slate-400 hover:text-white hover:bg-white/5 border-transparent'
+                  }`}
+              >
+                <span>{label}</span>
+                {isActive(hash) && <span className="w-1.5 h-1.5 rounded-full bg-primary" />}
+              </a>
+            ))}
           </nav>
 
           <div className="px-4 pb-8 pt-4 space-y-3 border-t border-border-dark">
@@ -190,7 +192,7 @@ export const Header = () => {
               Descargar CV
             </a>
             <a
-              href="#contact"
+              href={isHome ? '#contact' : '/#contact'}
               onClick={() => setMobileOpen(false)}
               className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20"
             >
