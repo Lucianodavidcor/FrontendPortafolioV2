@@ -10,10 +10,9 @@ const NAV_ITEMS = [
   { label: 'Proyectos',   hash: 'proyectos' },
   { label: 'Habilidades', hash: 'habilidades' },
   { label: 'Experiencia', hash: 'experiencia' },
-  { label: 'Sobre mí',    hash: 'about' },
 ];
 
-const cvUrl = process.env.NEXT_PUBLIC_CV_URL || '/cv.pdf';
+const cvUrl = process.env.NEXT_PUBLIC_CV_URL || '/CV-Luciano-Cortez.pdf';
 
 export const Header = () => {
   const pathname                          = usePathname();

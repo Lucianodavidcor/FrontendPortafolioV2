@@ -30,31 +30,30 @@ function CardInner({
 }: { project: Project; index: number; isLarge: boolean; inView: boolean }) {
   const [hovered, setHovered] = useState(false);
 
-  // Mostrar hasta 6 tags
   const visibleTags = project.tags?.slice(0, 6) ?? [];
   const extraCount  = (project.tags?.length ?? 0) - 6;
 
   return (
+    // ✅ Template literal en una sola línea — evita hydration mismatch por whitespace
     <div
-      className={`transition-all duration-700 ease-out h-full
-        ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+      className={`transition-all duration-700 ease-out h-full ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
       style={{ transitionDelay: `${(index % 2) * 120}ms` }}
     >
       <Link href={`/projects/${project.id}`} className="block h-full">
+        {/* ✅ className estático en una sola línea */}
         <div
-          className="group relative overflow-hidden rounded-2xl bg-surface-dark border border-border-dark
-            hover:border-primary/30 transition-all duration-500 h-full"
+          className="group relative overflow-hidden rounded-2xl bg-surface-dark border border-border-dark hover:border-primary/30 transition-all duration-500 h-full"
           style={{ minHeight: '360px' }}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
         >
           {/* Imagen */}
           {project.thumbnail ? (
+            // ✅ Template literal en una sola línea
             <img
               src={project.thumbnail}
               alt={project.title}
-              className={`absolute inset-0 w-full h-full object-cover transition-all duration-700
-                ${hovered ? 'scale-105 brightness-75' : 'scale-100 brightness-50'}`}
+              className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ${hovered ? 'scale-105 brightness-75' : 'scale-100 brightness-50'}`}
             />
           ) : (
             <div className="absolute inset-0 bg-linear-to-br from-surface-dark to-background-dark" />
@@ -68,7 +67,7 @@ function CardInner({
             {String(index + 1).padStart(2, '0')}
           </div>
 
-          {/* Tags — hasta 6, con +N si hay más */}
+          {/* Tags */}
           <div className="absolute top-5 left-5 flex flex-wrap gap-1.5 max-w-[70%]">
             {visibleTags.map(tag => (
               <span
@@ -89,51 +88,38 @@ function CardInner({
           <div className="absolute bottom-0 left-0 right-0 p-6 md:p-7">
             <div className="flex items-end justify-between gap-4">
               <div className="flex-1 min-w-0">
-                <h3
-                  className={`font-black text-white tracking-tighter leading-none mb-2
-                    ${isLarge ? 'text-2xl md:text-3xl' : 'text-xl md:text-2xl'}`}
-                >
+                {/* ✅ Template literal en una sola línea */}
+                <h3 className={`font-black text-white tracking-tighter leading-none mb-2 ${isLarge ? 'text-2xl md:text-3xl' : 'text-xl md:text-2xl'}`}>
                   {project.title}
                 </h3>
-                <p
-                  className={`text-sm text-slate-400 leading-relaxed line-clamp-2 max-w-md transition-all duration-300
-                    ${hovered ? 'opacity-100 max-h-12' : 'opacity-0 max-h-0 overflow-hidden'}`}
-                >
+                {/* ✅ Template literal en una sola línea */}
+                <p className={`text-sm text-slate-400 leading-relaxed line-clamp-2 max-w-md transition-all duration-300 ${hovered ? 'opacity-100 max-h-12' : 'opacity-0 max-h-0 overflow-hidden'}`}>
                   {project.shortDescription}
                 </p>
               </div>
 
-              <div
-                className={`shrink-0 w-11 h-11 rounded-full border flex items-center justify-center transition-all duration-300
-                  ${hovered
-                    ? 'bg-primary border-primary text-white scale-110 rotate-0'
-                    : 'bg-transparent border-slate-700 text-slate-500 -rotate-45'
-                  }`}
-              >
+              {/* ✅ Template literal en una sola línea */}
+              <div className={`shrink-0 w-11 h-11 rounded-full border flex items-center justify-center transition-all duration-300 ${hovered ? 'bg-primary border-primary text-white scale-110 rotate-0' : 'bg-transparent border-slate-700 text-slate-500 -rotate-45'}`}>
                 <ArrowUpRight className="w-4 h-4" />
               </div>
             </div>
           </div>
 
           {/* Borde izquierdo accent */}
-          <div
-            className={`absolute left-0 top-0 bottom-0 w-0.5 bg-primary transition-opacity duration-500
-              ${hovered ? 'opacity-100' : 'opacity-0'}`}
-          />
+          <div className={`absolute left-0 top-0 bottom-0 w-0.5 bg-primary transition-opacity duration-500 ${hovered ? 'opacity-100' : 'opacity-0'}`} />
         </div>
       </Link>
     </div>
   );
 }
 
-// Fila como componente propio para tener su propio useInView
 function ProjectRow({
   row, rowIndex, globalStart,
 }: { row: Project[]; rowIndex: number; globalStart: number }) {
   const { ref, inView } = useInView(0.1);
   const isEvenRow = rowIndex % 2 === 0;
 
-  const getSpan  = (col: number) => isEvenRow ? (col === 0 ? 'md:col-span-8' : 'md:col-span-4') : (col === 0 ? 'md:col-span-4' : 'md:col-span-8');
+  const getSpan    = (col: number) => isEvenRow ? (col === 0 ? 'md:col-span-8' : 'md:col-span-4') : (col === 0 ? 'md:col-span-4' : 'md:col-span-8');
   const getIsLarge = (col: number) => isEvenRow ? col === 0 : col === 1;
 
   return (
@@ -170,8 +156,7 @@ export const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
 
       <div
         ref={titleRef}
-        className={`flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8
-          transition-all duration-700 ${titleIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+        className={`flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8 transition-all duration-700 ${titleIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
       >
         <div className="space-y-3">
           <div className="flex items-center gap-4">
