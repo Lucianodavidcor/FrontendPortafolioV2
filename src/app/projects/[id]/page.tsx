@@ -6,7 +6,7 @@ import remarkGfm from 'remark-gfm';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { fetchApi } from '@/lib/api';
-import { ApiResponse, Project } from '@/types/api';
+import { ApiResponse, Project, Profile } from '@/types/api';
 import { ProjectGalleryClient } from '@/components/project/ProjectGalleryClient';
 
 interface ProjectDetailPageProps {
@@ -19,12 +19,14 @@ export default async function ProjectDetail({ params }: ProjectDetailPageProps) 
 
   let project: Project | null = null;
 
-  try {
-    const res = await fetchApi<ApiResponse<Project>>(`/projects/${id}`);
-    project = res.data;
-  } catch (error) {
-    notFound();
-  }
+  // Fetch en paralelo: proyecto + perfil (para socialLinks y nombre del footer)
+  const [projectRes, profileRes] = await Promise.all([
+    fetchApi<ApiResponse<Project>>(`/projects/${id}`).catch(() => null),
+    fetchApi<ApiResponse<Profile>>('/profile').catch(() => null),
+  ]);
+
+  project = projectRes?.data ?? null;
+  const profile = profileRes?.data;
 
   if (!project) notFound();
 
@@ -34,12 +36,12 @@ export default async function ProjectDetail({ params }: ProjectDetailPageProps) 
 
       <main className="flex-1">
         {/* Hero */}
-        <section className="relative w-full h-[716px] min-h-[500px] overflow-hidden">
+        <section className="relative w-full h-179 min-h-125 overflow-hidden">
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url('${project.thumbnail}')` }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/40 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-background-dark via-background-dark/40 to-transparent" />
 
           <div className="absolute top-24 left-6 md:left-16 z-10">
             <Link
@@ -218,7 +220,10 @@ export default async function ProjectDetail({ params }: ProjectDetailPageProps) 
         <ProjectGalleryClient images={project.gallery || []} />
       </main>
 
-      <Footer />
+      <Footer
+        socialLinks={profile?.socialLinks || []}
+        authorName={profile?.name || 'Portfolio'}
+      />
     </>
   );
 }

@@ -65,7 +65,7 @@ export const Header = () => {
     <>
       {/* ── Header fijo ── z-50 en desktop, z-[70] para quedar siempre encima del drawer */}
       <header
-        className={`fixed top-0 left-0 w-full z-[70] transition-all duration-500
+        className={`fixed top-0 left-0 w-full z-70 transition-all duration-500
           ${scrolled
             ? 'py-3 bg-background-dark/80 backdrop-blur-xl border-b border-border-dark shadow-2xl shadow-black/20'
             : 'py-5 bg-transparent'
@@ -151,7 +151,7 @@ export const Header = () => {
           z-[60]: por encima del contenido de la página (que puede tener z-10, z-20, etc.)
           pero por debajo del header (z-[70]) para que la hamburguesa siga visible y usable
       ── */}
-      <div className={`fixed inset-0 z-[60] md:hidden transition-all duration-300
+      <div className={`fixed inset-0 z-60 md:hidden transition-all duration-300
           ${mobileOpen ? 'visible' : 'invisible pointer-events-none'}`}>
 
         {/* Overlay oscuro — cierra el drawer al hacer click fuera */}
