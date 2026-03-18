@@ -22,11 +22,22 @@ export const Header = () => {
   const [mobileOpen, setMobileOpen]       = useState(false);
   const [activeSection, setActiveSection] = useState('');
 
+  // Scroll listener
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  // Bloquear scroll del body cuando el drawer mobile está abierto
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileOpen]);
 
   // IntersectionObserver solo tiene sentido en la home
   useEffect(() => {
@@ -52,8 +63,9 @@ export const Header = () => {
 
   return (
     <>
+      {/* ── Header fijo ── z-50 en desktop, z-[70] para quedar siempre encima del drawer */}
       <header
-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-500
+        className={`fixed top-0 left-0 w-full z-[70] transition-all duration-500
           ${scrolled
             ? 'py-3 bg-background-dark/80 backdrop-blur-xl border-b border-border-dark shadow-2xl shadow-black/20'
             : 'py-5 bg-transparent'
@@ -135,19 +147,25 @@ export const Header = () => {
         </nav>
       </header>
 
-      {/* ── Drawer Mobile ── */}
-      <div className={`fixed inset-0 z-40 md:hidden transition-all duration-300
+      {/* ── Drawer Mobile ──
+          z-[60]: por encima del contenido de la página (que puede tener z-10, z-20, etc.)
+          pero por debajo del header (z-[70]) para que la hamburguesa siga visible y usable
+      ── */}
+      <div className={`fixed inset-0 z-[60] md:hidden transition-all duration-300
           ${mobileOpen ? 'visible' : 'invisible pointer-events-none'}`}>
 
+        {/* Overlay oscuro — cierra el drawer al hacer click fuera */}
         <div
           onClick={() => setMobileOpen(false)}
           className={`absolute inset-0 bg-background-dark/80 backdrop-blur-sm transition-opacity duration-300
             ${mobileOpen ? 'opacity-100' : 'opacity-0'}`}
         />
 
+        {/* Panel lateral */}
         <div className={`absolute top-0 right-0 h-full w-72 bg-surface-dark border-l border-border-dark shadow-2xl flex flex-col transition-transform duration-300 ease-out
             ${mobileOpen ? 'translate-x-0' : 'translate-x-full'}`}>
 
+          {/* Cabecera del panel */}
           <div className="flex items-center justify-between px-6 py-5 border-b border-border-dark">
             <div className="relative w-8 h-8">
               <Image src="/logoLycheedOS.png" alt="Logo" fill className="object-contain" />
@@ -160,6 +178,7 @@ export const Header = () => {
             </button>
           </div>
 
+          {/* Links de navegación */}
           <nav className="flex-1 px-4 py-6 space-y-1">
             {NAV_ITEMS.map(({ label, hash }, i) => (
               <a
@@ -179,6 +198,7 @@ export const Header = () => {
             ))}
           </nav>
 
+          {/* Acciones del panel */}
           <div className="px-4 pb-8 pt-4 space-y-3 border-t border-border-dark">
             <a
               href={cvUrl}
