@@ -11,7 +11,7 @@ const NAV_LINKS = [
   { label: 'Experiencia', href: '#experiencia' },
 ];
 
-const cvUrl = process.env.NEXT_PUBLIC_CV_URL || '/cv.pdf';
+const cvUrl = process.env.NEXT_PUBLIC_CV_URL || '/CV-Luciano-Cortez.pdf';
 
 export const Header = () => {
   const [scrolled, setScrolled]           = useState(false);
