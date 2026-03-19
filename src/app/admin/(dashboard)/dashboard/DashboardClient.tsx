@@ -4,19 +4,17 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import {
   Eye, Mail, FolderKanban, Wrench,
-  Edit, ExternalLink, ArrowUpRight, ArrowDownRight,
+  Edit, ExternalLink, ArrowUpRight,
   TrendingUp, Activity, ChevronRight, Zap,
   BarChart3, Clock, MessageSquare, Code2
 } from 'lucide-react';
 import { Project, Stats } from '@/types/api';
 
-// ─── Tipos ────────────────────────────────────────────────────────────────────
 interface DashboardClientProps {
-  stats: Stats | null;
+  stats:          Stats | null;
   recentProjects: Project[];
 }
 
-// ─── Datos mock de actividad semanal (reemplazá con tu API si tenés el endpoint)
 const WEEKLY_ACTIVITY = [
   { day: 'Lun', visits: 42, messages: 3 },
   { day: 'Mar', visits: 78, messages: 5 },
@@ -29,7 +27,6 @@ const WEEKLY_ACTIVITY = [
 
 const MAX_VISITS = Math.max(...WEEKLY_ACTIVITY.map(d => d.visits));
 
-// ─── Componente: Número animado ───────────────────────────────────────────────
 function AnimatedNumber({ value, duration = 1200 }: { value: number; duration?: number }) {
   const [display, setDisplay] = useState(0);
   useEffect(() => {
@@ -45,7 +42,6 @@ function AnimatedNumber({ value, duration = 1200 }: { value: number; duration?: 
   return <>{display.toLocaleString()}</>;
 }
 
-// ─── Componente: Barra del gráfico ────────────────────────────────────────────
 function Bar({ height, label, visits, messages, index }: {
   height: number; label: string; visits: number; messages: number; index: number;
 }) {
@@ -57,22 +53,17 @@ function Bar({ height, label, visits, messages, index }: {
 
   return (
     <div className="flex flex-col items-center gap-2 flex-1 group">
-      {/* Tooltip */}
       <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-slate-900 border border-border-dark text-white text-[10px] font-mono px-2 py-1.5 rounded-md whitespace-nowrap pointer-events-none shadow-xl z-10 relative">
         <div className="text-primary font-bold">{visits} visitas</div>
         <div className="text-slate-400">{messages} msgs</div>
       </div>
 
-      {/* Barra */}
       <div className="relative w-full flex items-end justify-center h-32">
-        {/* Barra de visitas */}
         <div
           className="w-full rounded-t-sm bg-primary/20 border border-primary/30 transition-all duration-700 ease-out group-hover:bg-primary/40 group-hover:border-primary/60 relative overflow-hidden"
           style={{ height: animated ? `${height}%` : '4px', minHeight: '4px' }}
         >
-          {/* Brillo interior */}
           <div className="absolute inset-0 bg-linear-to-t from-transparent via-primary/10 to-primary/30" />
-          {/* Línea top */}
           <div className="absolute top-0 left-0 right-0 h-0.5 bg-primary/70" />
         </div>
       </div>
@@ -82,7 +73,6 @@ function Bar({ height, label, visits, messages, index }: {
   );
 }
 
-// ─── Componente: Stat Card ────────────────────────────────────────────────────
 function StatCard({
   icon, label, value, sub, accent, delay
 }: {
@@ -104,7 +94,6 @@ function StatCard({
           : 'bg-background-dark border-border-dark hover:border-primary/40'
         }`}
     >
-      {/* Fondo decorativo */}
       <div className={`absolute -top-6 -right-6 w-24 h-24 rounded-full blur-2xl transition-opacity duration-300
         ${accent ? 'bg-white/10' : 'bg-primary/0 group-hover:bg-primary/10'}`}
       />
@@ -132,10 +121,17 @@ function StatCard({
   );
 }
 
-// ─── Componente Principal ─────────────────────────────────────────────────────
 export const DashboardClient = ({ stats, recentProjects }: DashboardClientProps) => {
-  const now = new Date();
-  const hour = now.getHours();
+  // ── Fix hydration: la hora solo se calcula en el cliente ─────────────────
+  const [now, setNow] = useState<Date | null>(null);
+
+  useEffect(() => {
+    setNow(new Date());
+    const interval = setInterval(() => setNow(new Date()), 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const hour     = now?.getHours() ?? 12;
   const greeting = hour < 12 ? 'Buenos días' : hour < 18 ? 'Buenas tardes' : 'Buenas noches';
 
   return (
@@ -159,11 +155,15 @@ export const DashboardClient = ({ stats, recentProjects }: DashboardClientProps)
         <div className="flex items-center gap-3 text-[10px] font-mono text-slate-600 bg-surface-dark border border-border-dark rounded-lg px-4 py-2">
           <Clock className="w-3 h-3 text-primary" />
           <span>
-            {now.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' })}
+            {now
+              ? now.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' })
+              : '...'}
           </span>
           <span className="text-slate-700">|</span>
           <span className="text-primary">
-            {now.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
+            {now
+              ? now.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
+              : '--:--'}
           </span>
         </div>
       </div>
@@ -222,9 +222,7 @@ export const DashboardClient = ({ stats, recentProjects }: DashboardClientProps)
             </div>
           </div>
 
-          {/* Ejes Y */}
           <div className="relative">
-            {/* Líneas de guía */}
             <div className="absolute inset-0 flex flex-col justify-between pointer-events-none pb-8">
               {[100, 75, 50, 25].map(pct => (
                 <div key={pct} className="flex items-center gap-3">
@@ -236,7 +234,6 @@ export const DashboardClient = ({ stats, recentProjects }: DashboardClientProps)
               ))}
             </div>
 
-            {/* Barras */}
             <div className="flex items-end gap-2 pt-2 pl-12 pb-0">
               {WEEKLY_ACTIVITY.map((d, i) => (
                 <Bar
@@ -251,12 +248,11 @@ export const DashboardClient = ({ stats, recentProjects }: DashboardClientProps)
             </div>
           </div>
 
-          {/* Resumen semanal */}
           <div className="grid grid-cols-3 gap-3 pt-2 border-t border-border-dark">
             {[
               { label: 'Total visitas', value: WEEKLY_ACTIVITY.reduce((a, b) => a + b.visits, 0).toLocaleString() },
-              { label: 'Pico diario', value: MAX_VISITS.toLocaleString() },
-              { label: 'Mensajes', value: WEEKLY_ACTIVITY.reduce((a, b) => a + b.messages, 0).toLocaleString() },
+              { label: 'Pico diario',   value: MAX_VISITS.toLocaleString() },
+              { label: 'Mensajes',      value: WEEKLY_ACTIVITY.reduce((a, b) => a + b.messages, 0).toLocaleString() },
             ].map(item => (
               <div key={item.label} className="text-center">
                 <div className="text-lg font-black text-white">{item.value}</div>
@@ -274,10 +270,10 @@ export const DashboardClient = ({ stats, recentProjects }: DashboardClientProps)
           </h3>
 
           {[
-            { label: 'Nuevo Proyecto', href: '/admin/projects/new', icon: <FolderKanban className="w-4 h-4" />, accent: true },
+            { label: 'Nuevo Proyecto',    href: '/admin/projects/new',  icon: <FolderKanban className="w-4 h-4" />, accent: true },
             { label: 'Nueva Experiencia', href: '/admin/experience/new', icon: <Wrench className="w-4 h-4" /> },
-            { label: 'Ver Mensajes', href: '/admin/messages', icon: <Mail className="w-4 h-4" />, badge: stats?.messages?.unread },
-            { label: 'Editar Bio', href: '/admin/bio-skills', icon: <Edit className="w-4 h-4" /> },
+            { label: 'Ver Mensajes',      href: '/admin/messages',       icon: <Mail className="w-4 h-4" />, badge: stats?.messages?.unread },
+            { label: 'Editar Bio',        href: '/admin/bio-skills',     icon: <Edit className="w-4 h-4" /> },
           ].map(item => (
             <Link key={item.href} href={item.href}>
               <div className={`flex items-center justify-between px-4 py-3 rounded-lg border transition-all group cursor-pointer
@@ -305,13 +301,12 @@ export const DashboardClient = ({ stats, recentProjects }: DashboardClientProps)
             </Link>
           ))}
 
-          {/* Mini estado del sistema */}
           <div className="mt-auto pt-4 border-t border-border-dark space-y-2">
             <p className="text-[9px] uppercase tracking-widest text-slate-600 font-bold mb-3">Estado del sistema</p>
             {[
-              { label: 'API Backend', ok: true },
-              { label: 'Base de datos', ok: true },
-              { label: 'Sesión activa', ok: true },
+              { label: 'API Backend',    ok: true },
+              { label: 'Base de datos',  ok: true },
+              { label: 'Sesión activa',  ok: true },
             ].map(s => (
               <div key={s.label} className="flex items-center justify-between">
                 <span className="text-[10px] text-slate-500 font-medium">{s.label}</span>
@@ -347,7 +342,6 @@ export const DashboardClient = ({ stats, recentProjects }: DashboardClientProps)
         </div>
 
         <div className="bg-background-dark border border-border-dark rounded-xl overflow-hidden">
-          {/* Cabecera tabla */}
           <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-surface-dark border-b border-border-dark text-[9px] font-bold uppercase tracking-[0.2em] text-slate-600">
             <div className="col-span-5">Proyecto</div>
             <div className="col-span-4 hidden md:block">Stack</div>
@@ -362,7 +356,6 @@ export const DashboardClient = ({ stats, recentProjects }: DashboardClientProps)
                   className="grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-surface-dark transition-colors group"
                   style={{ animationDelay: `${i * 60}ms` }}
                 >
-                  {/* Proyecto */}
                   <div className="col-span-5 flex items-center gap-4">
                     <div
                       className="w-10 h-10 rounded-lg bg-surface-dark border border-border-dark bg-cover bg-center shrink-0 group-hover:border-primary/30 transition-colors"
@@ -376,7 +369,6 @@ export const DashboardClient = ({ stats, recentProjects }: DashboardClientProps)
                     </div>
                   </div>
 
-                  {/* Stack */}
                   <div className="col-span-4 hidden md:flex flex-wrap gap-1.5">
                     {project.tags?.slice(0, 3).map(tag => (
                       <span key={tag} className="px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide rounded bg-primary/10 text-primary border border-primary/20">
@@ -388,8 +380,7 @@ export const DashboardClient = ({ stats, recentProjects }: DashboardClientProps)
                     )}
                   </div>
 
-                  {/* Acciones */}
-                  <div className="col-span-3 md:col-span-3 flex items-center justify-end gap-1">
+                  <div className="col-span-3 flex items-center justify-end gap-1">
                     <Link
                       href={`/projects/${project.id}`}
                       target="_blank"

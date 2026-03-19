@@ -77,3 +77,24 @@ export interface Stats {
   messages: { total: number; unread: number };
   pageVisits: number;
 }
+
+// ── Internacionalización ──────────────────────────────────────────────────
+export interface Language {
+  id:        string;
+  code:      string;    // "en", "fr", "pt"
+  name:      string;    // "English", "Français"
+  flag:      string;    // "🇺🇸", "🇫🇷"
+  isDefault: boolean;
+  isActive:  boolean;
+  createdAt: string;
+}
+
+export interface TranslationStats {
+  languageId:  string;
+  code:        string;
+  name:        string;
+  flag:        string;
+  translated:  number;
+  total:       number;
+  percentage:  number;
+}
