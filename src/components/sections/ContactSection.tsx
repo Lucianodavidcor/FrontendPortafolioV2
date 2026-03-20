@@ -71,7 +71,7 @@ export const ContactSection = () => {
   };
 
   return (
-    <section id="contact" className="py-24 px-6 md:px-12 max-w-7xl mx-auto relative">
+    <section id="contact" className="py-20 md:py-24 px-4 sm:px-6 md:px-12 max-w-7xl mx-auto relative">
       {/* Background Glows */}
       <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-96 h-96 bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-[30rem] h-[30rem] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none" />
@@ -88,7 +88,7 @@ export const ContactSection = () => {
 
       {/* Main Card */}
       <div className="relative z-10 mx-auto max-w-6xl rounded-[2.5rem] p-[1px] bg-gradient-to-br from-white/10 via-primary/10 to-transparent overflow-hidden shadow-2xl shadow-black/40">
-        <div className="bg-surface-dark/80 backdrop-blur-2xl rounded-[2.5rem] p-8 md:p-12 lg:p-16 relative">
+        <div className="bg-surface-dark/80 backdrop-blur-2xl rounded-[2rem] md:rounded-[2.5rem] p-6 sm:p-8 md:p-12 lg:p-16 relative">
           
           {/* Notifications Toast */}
           <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20 w-full max-w-md px-4">
@@ -106,10 +106,10 @@ export const ContactSection = () => {
             )}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-20">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-20">
             
             {/* Columna Izquierda: Info */}
-            <div className="lg:col-span-2 space-y-10">
+            <div className="lg:col-span-2 space-y-8 md:space-y-10">
               <div className="space-y-4">
                 <h3 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
                   Envía un mensaje
@@ -155,8 +155,8 @@ export const ContactSection = () => {
 
             {/* Columna Derecha: Formulario */}
             <div className="lg:col-span-3">
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 md:space-y-8 mt-6 lg:mt-0">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
                   <div className="group">
                     <Input 
                       label="Tu Nombre" 

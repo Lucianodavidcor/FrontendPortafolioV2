@@ -107,44 +107,48 @@ export const Header = () => {
             ))}
           </div>
 
-          {/* Acciones Desktop */}
-          <div className="hidden md:flex items-center gap-3 shrink-0">
+          {/* Acciones & Hamburguesa */}
+          <div className="flex items-center gap-3 shrink-0">
+            {/* Language Switcher visible en desktop y mobile */}
+            <div className="flex items-center">
+              <LanguageSwitcher />
+            </div>
 
-            {/* ── Selector de idioma ── */}
-            <LanguageSwitcher />
+            {/* Acciones solo Desktop */}
+            <div className="hidden md:flex items-center gap-3">
+              <a
+                href={cvUrl}
+                target="_blank"
+                rel="noreferrer"
+                download={!cvUrl.startsWith('http')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold border transition-all duration-200 hover:scale-105
+                  ${scrolled
+                    ? 'bg-surface-dark border-border-dark text-slate-300 hover:border-primary/40 hover:text-white'
+                    : 'bg-white/5 border-white/10 text-white/80 hover:bg-white/10 hover:text-white backdrop-blur-sm'
+                  }`}
+              >
+                <Download className="w-4 h-4" />
+                CV
+              </a>
 
-            <a
-              href={cvUrl}
-              target="_blank"
-              rel="noreferrer"
-              download={!cvUrl.startsWith('http')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold border transition-all duration-200 hover:scale-105
-                ${scrolled
-                  ? 'bg-surface-dark border-border-dark text-slate-300 hover:border-primary/40 hover:text-white'
-                  : 'bg-white/5 border-white/10 text-white/80 hover:bg-white/10 hover:text-white backdrop-blur-sm'
-                }`}
+              <a
+                href={isHome ? '#contact' : '/#contact'}
+                className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold bg-primary text-white hover:scale-105 transition-transform shadow-lg shadow-primary/25 group"
+              >
+                Contacto
+                <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </a>
+            </div>
+
+            {/* Hamburguesa Mobile */}
+            <button
+              onClick={() => setMobileOpen(v => !v)}
+              className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl border border-border-dark bg-surface-dark/60 text-slate-300 hover:text-white hover:border-primary/40 transition-colors"
+              aria-label="Abrir menú"
             >
-              <Download className="w-4 h-4" />
-              CV
-            </a>
-
-            <a
-              href={isHome ? '#contact' : '/#contact'}
-              className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold bg-primary text-white hover:scale-105 transition-transform shadow-lg shadow-primary/25 group"
-            >
-              Contacto
-              <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </a>
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
-
-          {/* Hamburguesa Mobile */}
-          <button
-            onClick={() => setMobileOpen(v => !v)}
-            className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl border border-border-dark bg-surface-dark/60 text-slate-300 hover:text-white hover:border-primary/40 transition-colors"
-            aria-label="Abrir menú"
-          >
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
         </nav>
       </header>
 
@@ -186,10 +190,7 @@ export const Header = () => {
           {/* Acciones mobile */}
           <div className="px-4 pb-8 pt-4 space-y-3 border-t border-border-dark">
 
-            {/* Selector idioma mobile */}
-            <div className="flex justify-center pb-1">
-              <LanguageSwitcher />
-            </div>
+
 
             <a
               href={cvUrl}
