@@ -36,14 +36,14 @@ export default async function ProjectDetail({ params }: ProjectDetailPageProps) 
 
       <main className="flex-1">
         {/* Hero */}
-        <section className="relative w-full h-179 min-h-125 overflow-hidden">
+        <section className="relative w-full h-[70vh] md:h-[75vh] min-h-[500px] overflow-hidden">
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url('${project.thumbnail}')` }}
           />
           <div className="absolute inset-0 bg-linear-to-t from-background-dark via-background-dark/40 to-transparent" />
 
-          <div className="absolute top-24 left-6 md:left-16 z-10">
+          <div className="absolute top-20 left-4 md:top-24 md:left-16 z-10">
             <Link
               href="/"
               className="flex items-center gap-2 text-white/70 hover:text-white transition-colors bg-black/20 backdrop-blur-md px-4 py-2 rounded-full text-sm font-bold"
@@ -53,7 +53,7 @@ export default async function ProjectDetail({ params }: ProjectDetailPageProps) 
             </Link>
           </div>
 
-          <div className="absolute bottom-0 left-0 w-full p-8 md:p-16">
+          <div className="absolute bottom-0 left-0 w-full p-5 md:p-16">
             <div className="max-w-7xl mx-auto">
               <div className="flex flex-wrap gap-2 mb-4">
                 {project.tags?.map(tag => (
@@ -62,10 +62,10 @@ export default async function ProjectDetail({ params }: ProjectDetailPageProps) 
                   </span>
                 ))}
               </div>
-              <h1 className="text-5xl md:text-7xl font-bold text-white mb-4 leading-tight">
+              <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold text-white mb-3 md:mb-4 leading-tight">
                 {project.title}
               </h1>
-              <p className="text-slate-300 text-lg md:text-xl max-w-2xl font-light">
+              <p className="text-slate-300 text-sm sm:text-lg md:text-xl max-w-2xl font-light line-clamp-3 md:line-clamp-none">
                 {project.shortDescription}
               </p>
             </div>
@@ -73,8 +73,8 @@ export default async function ProjectDetail({ params }: ProjectDetailPageProps) 
         </section>
 
         {/* Contenido */}
-        <section className="max-w-7xl mx-auto px-6 py-20">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 py-10 md:py-20">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-16">
 
             {/* Descripción con Markdown — tablas, código, listas, etc. */}
             <div className="lg:col-span-2 space-y-8">
@@ -177,8 +177,8 @@ export default async function ProjectDetail({ params }: ProjectDetailPageProps) 
             </div>
 
             {/* Sidebar */}
-            <div className="space-y-8">
-              <div className="p-8 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <div className="space-y-4 md:space-y-8">
+              <div className="p-5 md:p-8 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
                 <h4 className="text-sm font-bold uppercase tracking-widest text-primary mb-6">
                   Enlaces del Proyecto
                 </h4>
