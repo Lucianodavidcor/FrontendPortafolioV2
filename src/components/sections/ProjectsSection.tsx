@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from 'react';
-import Link from 'next/link';
-import { ArrowUpRight, ArrowRight } from 'lucide-react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import { ArrowUpRight, ArrowRight, Loader2 } from 'lucide-react';
 import { Project } from '@/types/api';
 import { toSlug } from '@/lib/slug';
 
@@ -29,19 +29,31 @@ function useInView(threshold = 0.12) {
 function CardInner({
   project, index, isLarge, inView,
 }: { project: Project; index: number; isLarge: boolean; inView: boolean }) {
+  const router = useRouter();
   const [hovered, setHovered] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const visibleTags = project.tags?.slice(0, 6) ?? [];
   const extraCount  = (project.tags?.length ?? 0) - 6;
+  const href        = `/projects/${toSlug(project.title)}`;
+
+  const handleClick = useCallback(() => {
+    setLoading(true);
+    router.push(href);
+  }, [router, href]);
 
   return (
-    // ✅ Template literal en una sola línea — evita hydration mismatch por whitespace
     <div
       className={`transition-all duration-700 ease-out h-full ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
       style={{ transitionDelay: `${(index % 2) * 120}ms` }}
     >
-      <Link href={`/projects/${toSlug(project.title)}`} className="block h-full">
-        {/* ✅ className estático en una sola línea */}
+      <div
+        role="link"
+        tabIndex={0}
+        onClick={handleClick}
+        onKeyDown={e => e.key === 'Enter' && handleClick()}
+        className="block h-full cursor-pointer"
+      >
         <div
           className="group relative overflow-hidden rounded-2xl bg-surface-dark border border-border-dark hover:border-primary/30 transition-all duration-500 h-full"
           style={{ minHeight: '360px' }}
@@ -50,11 +62,10 @@ function CardInner({
         >
           {/* Imagen */}
           {project.thumbnail ? (
-            // ✅ Template literal en una sola línea
             <img
               src={project.thumbnail}
               alt={project.title}
-              className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ${hovered ? 'scale-105 brightness-75' : 'scale-100 brightness-50'}`}
+              className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ${hovered || loading ? 'scale-105 brightness-75' : 'scale-100 brightness-50'}`}
             />
           ) : (
             <div className="absolute inset-0 bg-linear-to-br from-surface-dark to-background-dark" />
@@ -62,6 +73,27 @@ function CardInner({
 
           {/* Gradiente */}
           <div className="absolute inset-0 bg-linear-to-t from-background-dark/92 via-background-dark/15 to-transparent" />
+
+          {/* ── Overlay de carga ─────────────────────────────── */}
+          {loading && (
+            <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-background-dark/70 backdrop-blur-sm animate-in fade-in duration-200">
+              <Loader2 className="w-8 h-8 text-primary animate-spin" />
+              <span className="text-xs font-bold uppercase tracking-widest text-slate-400">
+                Cargando…
+              </span>
+              {/* Shimmer bar */}
+              <div className="absolute bottom-0 left-0 h-0.5 w-full overflow-hidden">
+                <div
+                  className="h-full"
+                  style={{
+                    background: 'linear-gradient(to right, transparent, var(--color-primary,#7c3aed), transparent)',
+                    animation: 'shimmerBar 1.2s ease-in-out infinite',
+                    width: '60%',
+                  }}
+                />
+              </div>
+            </div>
+          )}
 
           {/* Número */}
           <div className="absolute top-5 right-5 text-[10px] font-mono font-bold text-slate-600 group-hover:text-slate-400 transition-colors">
@@ -89,27 +121,34 @@ function CardInner({
           <div className="absolute bottom-0 left-0 right-0 p-6 md:p-7">
             <div className="flex items-end justify-between gap-4">
               <div className="flex-1 min-w-0">
-                {/* ✅ Template literal en una sola línea */}
                 <h3 className={`font-black text-white tracking-tighter leading-none mb-2 ${isLarge ? 'text-2xl md:text-3xl' : 'text-xl md:text-2xl'}`}>
                   {project.title}
                 </h3>
-                {/* ✅ Template literal en una sola línea */}
                 <p className={`text-sm text-slate-400 leading-relaxed line-clamp-2 max-w-md transition-all duration-300 ${hovered ? 'opacity-100 max-h-12' : 'opacity-0 max-h-0 overflow-hidden'}`}>
                   {project.shortDescription}
                 </p>
               </div>
 
-              {/* ✅ Template literal en una sola línea */}
-              <div className={`shrink-0 w-11 h-11 rounded-full border flex items-center justify-center transition-all duration-300 ${hovered ? 'bg-primary border-primary text-white scale-110 rotate-0' : 'bg-transparent border-slate-700 text-slate-500 -rotate-45'}`}>
-                <ArrowUpRight className="w-4 h-4" />
+              <div className={`shrink-0 w-11 h-11 rounded-full border flex items-center justify-center transition-all duration-300 ${hovered || loading ? 'bg-primary border-primary text-white scale-110 rotate-0' : 'bg-transparent border-slate-700 text-slate-500 -rotate-45'}`}>
+                {loading
+                  ? <Loader2 className="w-4 h-4 animate-spin" />
+                  : <ArrowUpRight className="w-4 h-4" />
+                }
               </div>
             </div>
           </div>
 
           {/* Borde izquierdo accent */}
-          <div className={`absolute left-0 top-0 bottom-0 w-0.5 bg-primary transition-opacity duration-500 ${hovered ? 'opacity-100' : 'opacity-0'}`} />
+          <div className={`absolute left-0 top-0 bottom-0 w-0.5 bg-primary transition-opacity duration-500 ${hovered || loading ? 'opacity-100' : 'opacity-0'}`} />
         </div>
-      </Link>
+      </div>
+
+      <style>{`
+        @keyframes shimmerBar {
+          0%   { transform: translateX(-100%); }
+          100% { transform: translateX(250%); }
+        }
+      `}</style>
     </div>
   );
 }
@@ -189,13 +228,13 @@ export const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
 
       {projects.length >= 6 && (
         <div className={`mt-14 text-center transition-all duration-700 delay-500 ${titleIn ? 'opacity-100' : 'opacity-0'}`}>
-          <Link
+          <a
             href="/projects"
             className="group inline-flex items-center gap-3 border border-border-dark bg-surface-dark/50 text-slate-300 hover:text-white hover:border-primary/30 hover:bg-primary/5 px-8 py-3.5 rounded-full font-bold text-sm tracking-wide transition-all"
           >
             Ver todos los proyectos
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-          </Link>
+          </a>
         </div>
       )}
     </section>

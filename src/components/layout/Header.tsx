@@ -60,7 +60,7 @@ export const Header = () => {
     <>
       <header
         className={`fixed top-0 left-0 w-full z-70 transition-all duration-500
-          ${scrolled
+          ${scrolled || mobileOpen
             ? 'py-3 bg-background-dark/80 backdrop-blur-xl border-b border-border-dark shadow-2xl shadow-black/20'
             : 'py-5 bg-transparent'
           }`}
@@ -68,7 +68,16 @@ export const Header = () => {
         <nav className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between gap-6">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center shrink-0 group">
+          <Link
+            href="/"
+            onClick={e => {
+              if (isHome) {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
+            className="flex items-center shrink-0 group"
+          >
             <div className="relative w-10 h-10 transition-transform duration-300 group-hover:scale-110">
               <Image src="/logoLycheedOS.png" alt="LycheedOS Logo" fill className="object-contain" priority />
             </div>
@@ -139,31 +148,20 @@ export const Header = () => {
         </nav>
       </header>
 
-      {/* Drawer Mobile */}
-      <div className={`fixed inset-0 z-60 md:hidden transition-all duration-300
+      {/* Drawer Mobile — empieza debajo del header */}
+      <div className={`fixed inset-x-0 top-16 bottom-0 z-60 md:hidden transition-all duration-300
           ${mobileOpen ? 'visible' : 'invisible pointer-events-none'}`}>
 
+        {/* Fondo oscuro */}
         <div
           onClick={() => setMobileOpen(false)}
           className={`absolute inset-0 bg-background-dark/80 backdrop-blur-sm transition-opacity duration-300
             ${mobileOpen ? 'opacity-100' : 'opacity-0'}`}
         />
 
+        {/* Panel deslizable */}
         <div className={`absolute top-0 right-0 h-full w-72 bg-surface-dark border-l border-border-dark shadow-2xl flex flex-col transition-transform duration-300 ease-out
             ${mobileOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-
-          {/* Cabecera del panel */}
-          <div className="flex items-center justify-between px-6 py-5 border-b border-border-dark">
-            <div className="relative w-8 h-8">
-              <Image src="/logoLycheedOS.png" alt="Logo" fill className="object-contain" />
-            </div>
-            <button
-              onClick={() => setMobileOpen(false)}
-              className="w-8 h-8 flex items-center justify-center rounded-lg border border-border-dark text-slate-500 hover:text-white transition-colors"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
 
           {/* Links nav */}
           <nav className="flex-1 px-4 py-6 space-y-1">
