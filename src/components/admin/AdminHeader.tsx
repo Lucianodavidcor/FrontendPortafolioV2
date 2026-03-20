@@ -4,6 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Search, Bell, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
+const LS_KEY = 'admin_notifications_read';
+
 // Simulación de notificaciones — reemplaza con datos reales de tu API si quieres
 const MOCK_NOTIFICATIONS = [
   { id: '1', text: 'Nuevo mensaje de contacto recibido', time: 'hace 5 min', read: false },
@@ -11,14 +13,46 @@ const MOCK_NOTIFICATIONS = [
   { id: '3', text: 'Sesión iniciada desde Buenos Aires', time: 'hace 3 h', read: true },
 ];
 
+/** Lee los IDs de notificaciones ya leídas desde localStorage */
+function getReadIds(): Set<string> {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    return raw ? new Set(JSON.parse(raw) as string[]) : new Set();
+  } catch {
+    return new Set();
+  }
+}
+
+/** Guarda los IDs de notificaciones leídas en localStorage */
+function saveReadIds(ids: Set<string>) {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify([...ids]));
+  } catch {
+    // localStorage puede no estar disponible (SSR, modo privado, etc.)
+  }
+}
+
 export const AdminHeader = () => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
+  // Estado inicial igual al mock (sin localStorage), evita mismatch de hidratación SSR
   const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
   const notifRef = useRef<HTMLDivElement>(null);
 
   const unreadCount = notifications.filter(n => !n.read).length;
+
+  // Post-mount: sincroniza las notificaciones con los IDs leídos guardados en localStorage
+  // (solo se ejecuta en el cliente, después de la hidratación)
+  useEffect(() => {
+    const readIds = getReadIds();
+    if (readIds.size > 0) {
+      setNotifications(MOCK_NOTIFICATIONS.map(n => ({
+        ...n,
+        read: n.read || readIds.has(n.id),
+      })));
+    }
+  }, []);
 
   // Cerrar panel al hacer click fuera
   useEffect(() => {
@@ -54,7 +88,11 @@ export const AdminHeader = () => {
   };
 
   const markAllRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    setNotifications(prev => {
+      const updated = prev.map(n => ({ ...n, read: true }));
+      saveReadIds(new Set(updated.map(n => n.id)));
+      return updated;
+    });
   };
 
   return (
