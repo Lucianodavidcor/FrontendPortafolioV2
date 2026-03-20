@@ -9,6 +9,7 @@ import {
   BarChart3, Clock, MessageSquare, Code2
 } from 'lucide-react';
 import { Project, Stats } from '@/types/api';
+import { toSlug } from '@/lib/slug';
 
 interface DashboardClientProps {
   stats:          Stats | null;
@@ -382,7 +383,7 @@ export const DashboardClient = ({ stats, recentProjects }: DashboardClientProps)
 
                   <div className="col-span-3 flex items-center justify-end gap-1">
                     <Link
-                      href={`/projects/${project.id}`}
+                      href={`/projects/${toSlug(project.title)}`}
                       target="_blank"
                       className="p-2 text-slate-600 hover:text-green-400 hover:bg-green-400/10 rounded-lg transition-colors"
                       title="Ver en vivo"

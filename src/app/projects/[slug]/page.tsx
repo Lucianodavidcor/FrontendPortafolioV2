@@ -3,29 +3,59 @@ import Link from 'next/link';
 import { ArrowLeft, ExternalLink, Github } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import type { Metadata } from 'next';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { fetchApi } from '@/lib/api';
-import { ApiResponse, Project, Profile } from '@/types/api';
+import { PaginatedApiResponse, ApiResponse, Project, Profile } from '@/types/api';
 import { ProjectGalleryClient } from '@/components/project/ProjectGalleryClient';
+import { toSlug } from '@/lib/slug';
 
 interface ProjectDetailPageProps {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
+}
+
+/** Resuelve un slug a su Project completo. */
+async function getProjectBySlug(slug: string): Promise<Project | null> {
+  try {
+    const res = await fetchApi<PaginatedApiResponse<Project[]>>('/projects?limit=100');
+    const projects = res?.data ?? [];
+    return projects.find(p => toSlug(p.title) === slug) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+// ── SEO: genera metadata dinámica por proyecto ────────────────────────────────
+export async function generateMetadata({ params }: ProjectDetailPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const project = await getProjectBySlug(slug);
+  if (!project) return { title: 'Proyecto no encontrado' };
+  return {
+    title: `${project.title} | Portfolio`,
+    description: project.shortDescription ?? `Detalle del proyecto ${project.title}`,
+    openGraph: {
+      title: project.title,
+      description: project.shortDescription ?? '',
+      images: project.thumbnail ? [{ url: project.thumbnail }] : [],
+    },
+  };
 }
 
 export default async function ProjectDetail({ params }: ProjectDetailPageProps) {
-  const resolvedParams = await params;
-  const { id } = resolvedParams;
+  const { slug } = await params;
 
-  let project: Project | null = null;
+  // 1️⃣  Resolvemos slug → Project (necesitamos el id UUID para el fetch de detalle)
+  const projectFromList = await getProjectBySlug(slug);
+  if (!projectFromList) notFound();
 
-  // Fetch en paralelo: proyecto + perfil (para socialLinks y nombre del footer)
+  // 2️⃣  Fetch en paralelo: detalle completo del proyecto + perfil
   const [projectRes, profileRes] = await Promise.all([
-    fetchApi<ApiResponse<Project>>(`/projects/${id}`).catch(() => null),
+    fetchApi<ApiResponse<Project>>(`/projects/${projectFromList.id}`).catch(() => null),
     fetchApi<ApiResponse<Profile>>('/profile').catch(() => null),
   ]);
 
-  project = projectRes?.data ?? null;
+  const project = projectRes?.data ?? null;
   const profile = profileRes?.data;
 
   if (!project) notFound();

@@ -15,6 +15,7 @@ import {
 import { Project, PaginationMeta } from '@/types/api';
 import { fetchApi } from '@/lib/api';
 import { Button } from '@/components/ui/Button';
+import { toSlug } from '@/lib/slug';
 
 interface ProjectsClientProps {
   initialProjects: Project[];
@@ -131,7 +132,7 @@ export const ProjectsClient = ({ initialProjects, meta, token }: ProjectsClientP
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-1">
                         <Link 
-                          href={`/projects/${project.id}`} 
+                          href={`/projects/${toSlug(project.title)}`} 
                           target="_blank" 
                           className="p-2 text-slate-400 hover:text-primary transition-colors"
                           title="Preview Live"

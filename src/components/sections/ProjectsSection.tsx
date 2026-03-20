@@ -4,6 +4,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowUpRight, ArrowRight } from 'lucide-react';
 import { Project } from '@/types/api';
+import { toSlug } from '@/lib/slug';
 
 interface ProjectsSectionProps {
   projects: Project[];
@@ -39,7 +40,7 @@ function CardInner({
       className={`transition-all duration-700 ease-out h-full ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
       style={{ transitionDelay: `${(index % 2) * 120}ms` }}
     >
-      <Link href={`/projects/${project.id}`} className="block h-full">
+      <Link href={`/projects/${toSlug(project.title)}`} className="block h-full">
         {/* ✅ className estático en una sola línea */}
         <div
           className="group relative overflow-hidden rounded-2xl bg-surface-dark border border-border-dark hover:border-primary/30 transition-all duration-500 h-full"
